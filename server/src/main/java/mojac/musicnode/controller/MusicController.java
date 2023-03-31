@@ -45,6 +45,7 @@ public class MusicController {
 
     }
 
+    @Getter
     @AllArgsConstructor
     static class CreateMusicResponse {
         private Long id;
