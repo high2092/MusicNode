@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
+import { httpGet, httpPost } from '../utils';
 
 interface IMusic {
   id: number;
@@ -52,27 +53,6 @@ const MusicPage = ({ initialMusicList }: MusicPageProps) => {
       </form>
     </div>
   );
-};
-
-const API_HOST = 'http://localhost:8080';
-
-const httpGet = async (path: string) => {
-  const response = await fetch(`${API_HOST}/${path}`, {
-    method: 'GET',
-  });
-  return response;
-};
-
-const httpPost = async (path: string, payload: FieldValues) => {
-  const response = await fetch(`${API_HOST}/${path}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  return response;
 };
 
 export const getServerSideProps = async () => {
