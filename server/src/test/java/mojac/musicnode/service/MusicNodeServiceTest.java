@@ -32,7 +32,7 @@ class MusicNodeServiceTest {
         // g
         Music music = new Music("아아", "12312");
 
-        Category category = new Category("카테고리1", Color.black);
+        Category category = new Category("카테고리1", "#000000");
         music.addCategory(category);
 
         musicService.saveMusic(music);

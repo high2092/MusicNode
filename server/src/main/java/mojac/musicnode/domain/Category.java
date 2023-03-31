@@ -13,14 +13,14 @@ public class Category {
     private Long id;
 
     private String name;
-    private Color color;
+    private String color;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     protected Category() {}
-    public Category(String name, Color color) {
+    public Category(String name, String color) {
         this.name = name;
         this.color = color;
     }
@@ -29,7 +29,7 @@ public class Category {
         this.name = name;
     }
 
-    public void changeColor(Color color) {
+    public void changeColor(String color) {
         this.color = color;
     }
 }

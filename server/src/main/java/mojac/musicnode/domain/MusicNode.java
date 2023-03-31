@@ -24,7 +24,7 @@ public class MusicNode {
     @OneToOne(fetch = FetchType.LAZY)
     private MusicNode next;
 
-    private Color color;
+    private String color;
 
     protected MusicNode() {}
     public MusicNode(Music music) {
