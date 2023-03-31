@@ -2,11 +2,11 @@ package mojac.musicnode.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.awt.*;
 
 @Entity
+@Getter
 public class Category {
     @Id @GeneratedValue
     @Column(name = "category_id")
@@ -19,7 +19,7 @@ public class Category {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public Category(String name, Color color, Member member) {
+    public Category(String name, Color color) {
         this.name = name;
         this.color = color;
     }

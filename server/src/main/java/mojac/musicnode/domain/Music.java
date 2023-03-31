@@ -1,12 +1,14 @@
 package mojac.musicnode.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class PersonalizedMusic {
+@Getter
+public class Music {
     @Id @GeneratedValue
     @Column(name = "music_id")
     private Long id;
@@ -21,7 +23,7 @@ public class PersonalizedMusic {
     @OneToMany
     private List<Category> categories = new ArrayList<>();
 
-    public PersonalizedMusic(String name, String videoId) {
+    public Music(String name, String videoId) {
         this.name = name;
         this.videoId = videoId;
     }
