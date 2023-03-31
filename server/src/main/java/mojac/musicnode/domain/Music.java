@@ -23,6 +23,8 @@ public class Music {
     @OneToMany
     private List<Category> categories = new ArrayList<>();
 
+    protected Music() {}
+
     public Music(String name, String videoId) {
         this.name = name;
         this.videoId = videoId;

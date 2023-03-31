@@ -22,6 +22,8 @@ public class MusicList {
     @OneToMany(mappedBy = "musicList")
     private List<Thumbs> thumbs;
 
+    protected MusicList() {}
+
     public MusicList(String name, Member member) {
         this.name = name;
         this.member = member;

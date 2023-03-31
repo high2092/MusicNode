@@ -26,6 +26,7 @@ public class MusicNode {
 
     private Color color;
 
+    protected MusicNode() {}
     public MusicNode(Music music) {
         this.music = music;
     }

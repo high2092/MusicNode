@@ -19,6 +19,7 @@ public class Category {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    protected Category() {}
     public Category(String name, Color color) {
         this.name = name;
         this.color = color;
