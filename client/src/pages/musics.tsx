@@ -47,8 +47,8 @@ const MusicPage = ({ initialMusicList }: MusicPageProps) => {
         })}
       </div>
       <form onSubmit={handleSubmit(handleMusicSubmit)}>
-        <input {...register('name')} />
-        <input {...register('videoId')} />
+        <input {...register('name')} placeholder="이름" />
+        <input {...register('videoId')} placeholder="비디오 ID" />
         <button>음악 추가하기</button>
       </form>
     </div>
