@@ -30,6 +30,7 @@ public class MusicController {
         return new CreateMusicResponse(id);
     }
 
+    @Getter
     @AllArgsConstructor
     static class Result<T> {
         T data;
