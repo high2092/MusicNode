@@ -2,12 +2,6 @@ import { useState } from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
 import { httpGet, httpPost } from '../utils';
 
-interface IMusic {
-  id: number;
-  name: string;
-  videoId: string;
-}
-
 interface MusicPageProps {
   initialMusicList: IMusic[];
 }
