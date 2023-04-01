@@ -20,6 +20,10 @@ public class MusicNodeRepository {
         }
     }
 
+    public void delete(MusicNode node) {
+        em.remove(node);
+    }
+
     public MusicNode findOne(Long id) {
         return em.find(MusicNode.class, id);
     }

@@ -21,6 +21,11 @@ public class MusicNodeService {
         return node.getId();
     }
 
+    @Transactional
+    public void deleteMusicNode(MusicNode node) {
+        musicNodeRepository.delete(node);
+    }
+
     public MusicNode findOne(Long id) {
         return musicNodeRepository.findOne(id);
     }

@@ -59,6 +59,14 @@ public class MusicNodeController {
         return new ConnectNodeResponse(sourceId, targetId);
     }
 
+    @DeleteMapping("/node/{id}")
+    public DeleteNodeResponse deleteNode(@PathVariable Long id) {
+        MusicNode node = musicNodeService.findOne(id);
+        musicNodeService.deleteMusicNode(node);
+
+        return new DeleteNodeResponse(id);
+    }
+
     @Getter
     @AllArgsConstructor
     static class Result<T> {
@@ -85,6 +93,12 @@ public class MusicNodeController {
     static class ConnectNodeResponse {
         private Long source;
         private Long target;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    static class DeleteNodeResponse {
+        private Long id;
     }
 
     @Getter
