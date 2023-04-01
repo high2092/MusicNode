@@ -81,6 +81,7 @@ export const NodeList = ({ musicNodeList }) => {
   );
 
   const handleNodeClick = (e: React.MouseEvent, node: Node) => {
+    if (edgeSourceRef.current.includes('source') || edgeSourceRef.current.includes('target')) return;
     router.push(`/music-node/${node.id}`);
   };
 
