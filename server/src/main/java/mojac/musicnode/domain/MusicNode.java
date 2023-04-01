@@ -53,4 +53,11 @@ public class MusicNode {
         source.next = target;
         target.prev = source;
     }
+
+    public static void disconnect(MusicNode source) {
+        if (source.next != null) {
+            source.next.prev = null;
+            source.next = null;
+        }
+    }
 }

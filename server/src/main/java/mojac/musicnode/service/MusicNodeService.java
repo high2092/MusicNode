@@ -33,4 +33,9 @@ public class MusicNodeService {
     public void connect(MusicNode source, MusicNode target) {
         MusicNode.connect(source, target);
     }
+
+    @Transactional
+    public void disconnect(MusicNode source) {
+        MusicNode.disconnect(source);
+    }
 }

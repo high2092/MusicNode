@@ -47,10 +47,15 @@ public class MusicNodeController {
     }
 
     @PatchMapping("/node/{sourceId}")
-    public ConnectNodeResponse connectNode(@PathVariable Long sourceId, @RequestParam("targetId") Long targetId) {
+    public ConnectNodeResponse connectNode(@PathVariable Long sourceId, @RequestParam(value = "targetId", required = false) Long targetId) {
         MusicNode source = musicNodeService.findOne(sourceId);
-        MusicNode target = musicNodeService.findOne(targetId);
-        musicNodeService.connect(source, target);
+        if (targetId != null) {
+            MusicNode target = musicNodeService.findOne(targetId);
+            musicNodeService.connect(source, target);
+        } else {
+            musicNodeService.disconnect(source);
+        }
+
         return new ConnectNodeResponse(sourceId, targetId);
     }
 
