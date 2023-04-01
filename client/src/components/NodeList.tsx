@@ -90,9 +90,33 @@ export const NodeList = ({ musicNodeList }) => {
     edgeSourceRef.current = e.target.dataset.id;
   };
 
+  const handleEdgesDelete = async (edges) => {
+    const [edge] = edges;
+
+    const response = await httpPatch(`node/${edge.source}`);
+
+    if (!response.ok) {
+      console.log(1);
+      console.log(edge);
+      setEdges((edges) => {
+        return edges.concat(edge);
+      });
+    }
+  };
+
   return (
     <S.NodeList>
-      <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onEdgeUpdate={handleEdgeUpdate} onConnect={onConnect} onNodeClick={handleNodeClick} onMouseDownCapture={handleMouseDownCapture} />
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onEdgeUpdate={handleEdgeUpdate}
+        onConnect={onConnect}
+        onNodeClick={handleNodeClick}
+        onMouseDownCapture={handleMouseDownCapture}
+        onEdgesDelete={handleEdgesDelete}
+      />
     </S.NodeList>
   );
 };
