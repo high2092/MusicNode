@@ -28,4 +28,9 @@ public class MusicNodeService {
     public List<MusicNode> findAll() {
         return musicNodeRepository.findAll();
     }
+
+    @Transactional
+    public void connect(MusicNode source, MusicNode target) {
+        MusicNode.connect(source, target);
+    }
 }

@@ -46,6 +46,14 @@ public class MusicNodeController {
         return new CreateNodeResponse(id);
     }
 
+    @PatchMapping("/node/{sourceId}")
+    public ConnectNodeResponse connectNode(@PathVariable Long sourceId, @RequestParam("targetId") Long targetId) {
+        MusicNode source = musicNodeService.findOne(sourceId);
+        MusicNode target = musicNodeService.findOne(targetId);
+        musicNodeService.connect(source, target);
+        return new ConnectNodeResponse(sourceId, targetId);
+    }
+
     @Getter
     @AllArgsConstructor
     static class Result<T> {
@@ -69,11 +77,19 @@ public class MusicNodeController {
 
     @Getter
     @AllArgsConstructor
+    static class ConnectNodeResponse {
+        private Long source;
+        private Long target;
+    }
+
+    @Getter
+    @AllArgsConstructor
     static class MusicNodeDto {
         private Long id;
         private Long musicId;
         private String musicName;
         private String videoId;
+        private Long next;
 
         public MusicNodeDto(MusicNode musicNode) {
 
@@ -83,6 +99,7 @@ public class MusicNodeController {
             this.musicId = music.getId();
             this.musicName = music.getName();
             this.videoId = music.getVideoId();
+            if (musicNode.getNext() != null) this.next = musicNode.getNext().getId();
         }
     }
 

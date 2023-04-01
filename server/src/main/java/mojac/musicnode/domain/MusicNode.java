@@ -2,11 +2,13 @@ package mojac.musicnode.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 
 @Entity
 @Getter
+@Slf4j
 public class MusicNode {
     @Id @GeneratedValue
     @Column(name = "music_node_id")
@@ -42,5 +44,13 @@ public class MusicNode {
 
         if (p.next != null) p.next.prev = n;
         p.next = n;
+    }
+
+    public static void connect(MusicNode source, MusicNode target) {
+        if (source.next != null) {
+            source.next.prev = null;
+        }
+        source.next = target;
+        target.prev = source;
     }
 }
