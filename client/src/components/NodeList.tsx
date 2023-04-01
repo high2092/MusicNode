@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import * as S from './styles/NodeList';
 import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType } from 'reactflow';
 import type { Node } from 'reactflow';
@@ -40,6 +40,7 @@ export const NodeList = ({ musicNodeList }) => {
   const router = useRouter();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const edgeSourceRef = useRef<string>();
 
   useEffect(() => {
     // console.log(musicNodeList.length, nodes.length, initialNodes.length);
@@ -59,6 +60,9 @@ export const NodeList = ({ musicNodeList }) => {
 
   const onConnect = useCallback(
     (params) => {
+      // if (edgeSourceRef.current !== params.source) return; // 편집점과 노드는 아이디가 별개이므로 아래와 같이 작성
+      if (edgeSourceRef.current.includes('target')) return;
+
       const responseOk = true;
       if (responseOk) {
         setEdges((edges) => {
@@ -75,9 +79,14 @@ export const NodeList = ({ musicNodeList }) => {
     router.push(`/music-node/${node.id}`);
   };
 
+  const handleMouseDownCapture = (e) => {
+    // ReactFlow 컴포넌트에 onNodeMouseDown 속성이 있었다면 더 좋았을텐데 아쉽다
+    edgeSourceRef.current = e.target.dataset.id;
+  };
+
   return (
     <S.NodeList>
-      <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onEdgeUpdate={handleEdgeUpdate} onConnect={onConnect} onNodeClick={handleNodeClick} />
+      <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} onEdgesChange={onEdgesChange} onEdgeUpdate={handleEdgeUpdate} onConnect={onConnect} onNodeClick={handleNodeClick} onMouseDownCapture={handleMouseDownCapture} />
     </S.NodeList>
   );
 };
