@@ -19,3 +19,14 @@ export const httpPost = async (path: string, payload: FieldValues) => {
 
   return response;
 };
+
+export const httpPatch = async (path: string) => {
+  const response = await fetch(`${API_HOST}/${path}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  return response;
+};

@@ -5,6 +5,7 @@ import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
 
 import 'reactflow/dist/style.css';
+import { httpPatch } from '../utils';
 
 const calculateNodePosition = (idx: number) => {
   const NODE_DEFAULT_POSITION_X = 50;
@@ -36,6 +37,7 @@ const convert = (musicNodeList: IMusicNode[]) => {
 
 export const NodeList = ({ musicNodeList }) => {
   const { initialNodes, initialEdges } = convert(musicNodeList);
+  console.log(musicNodeList);
 
   const router = useRouter();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -47,9 +49,10 @@ export const NodeList = ({ musicNodeList }) => {
     setNodes(initialNodes); // hook 때문인지 nodes 생명주기가 React에서 분리되어 있는 듯
   }, [musicNodeList]);
 
-  const handleEdgeUpdate = (oldEdge, newConnection) => {
-    const responseOk = true;
-    if (responseOk) {
+  const handleEdgeUpdate = async (oldEdge, newConnection) => {
+    const { source: sourceId, target: targetId } = newConnection;
+    const response = await httpPatch(`node/${sourceId}?targetId=${targetId}`);
+    if (response.ok) {
       setEdges((edges) => {
         edges = edges.filter((edge) => edge.id !== oldEdge.id);
         edges.push(createArrowEdge(newConnection));
@@ -59,12 +62,14 @@ export const NodeList = ({ musicNodeList }) => {
   };
 
   const onConnect = useCallback(
-    (params) => {
+    async (params) => {
       // if (edgeSourceRef.current !== params.source) return; // 편집점과 노드는 아이디가 별개이므로 아래와 같이 작성
       if (edgeSourceRef.current.includes('target')) return;
 
-      const responseOk = true;
-      if (responseOk) {
+      const { source: sourceId, target: targetId } = params;
+      const response = await httpPatch(`node/${sourceId}?targetId=${targetId}`);
+
+      if (response.ok) {
         setEdges((edges) => {
           edges = edges.filter((edge) => edge.source !== params.source);
           edges.push(createArrowEdge(params));
