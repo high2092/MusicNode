@@ -38,6 +38,7 @@ const NodePage = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => 
           musicId: music.id,
           musicName: music.name,
           videoId: music.videoId,
+          next: undefined,
         },
       ]);
     }

@@ -9,4 +9,5 @@ interface IMusicNode {
   musicId: number;
   musicName: string;
   videoId: string;
+  next: number;
 }
