@@ -30,3 +30,11 @@ export const httpPatch = async (path: string) => {
 
   return response;
 };
+
+export const httpDelete = async (path: string) => {
+  const response = await fetch(`${API_HOST}/${path}`, {
+    method: 'DELETE',
+  });
+
+  return response;
+};

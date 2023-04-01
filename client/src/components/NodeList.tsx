@@ -5,7 +5,7 @@ import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
 
 import 'reactflow/dist/style.css';
-import { httpPatch } from '../utils';
+import { httpDelete, httpPatch } from '../utils';
 
 const calculateNodePosition = (idx: number) => {
   const NODE_DEFAULT_POSITION_X = 50;
@@ -90,14 +90,24 @@ export const NodeList = ({ musicNodeList }) => {
     edgeSourceRef.current = e.target.dataset.id;
   };
 
+  const handleNodesDelete = async (nodes) => {
+    const [node] = nodes;
+
+    const response = await httpDelete(`node/${node.id}`);
+
+    if (!response.ok) {
+      setNodes((nodes) => {
+        return nodes.concat(node);
+      });
+    }
+  };
+
   const handleEdgesDelete = async (edges) => {
     const [edge] = edges;
 
     const response = await httpPatch(`node/${edge.source}`);
 
     if (!response.ok) {
-      console.log(1);
-      console.log(edge);
       setEdges((edges) => {
         return edges.concat(edge);
       });
@@ -115,6 +125,7 @@ export const NodeList = ({ musicNodeList }) => {
         onConnect={onConnect}
         onNodeClick={handleNodeClick}
         onMouseDownCapture={handleMouseDownCapture}
+        onNodesDelete={handleNodesDelete}
         onEdgesDelete={handleEdgesDelete}
       />
     </S.NodeList>
