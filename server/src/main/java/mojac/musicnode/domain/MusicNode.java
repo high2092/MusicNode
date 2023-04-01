@@ -15,7 +15,7 @@ public class MusicNode {
     @OneToOne(fetch = FetchType.LAZY)
     private Member member; // 흠..
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Music music;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -29,6 +29,11 @@ public class MusicNode {
     protected MusicNode() {}
     public MusicNode(Music music) {
         this.music = music;
+    }
+
+    public MusicNode(Music music, String color) {
+        this.music = music;
+        this.color = color;
     }
 
     public static void insert(MusicNode p, MusicNode n) {

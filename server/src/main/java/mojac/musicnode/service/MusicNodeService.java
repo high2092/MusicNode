@@ -6,6 +6,8 @@ import mojac.musicnode.repository.MusicNodeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -21,5 +23,9 @@ public class MusicNodeService {
 
     public MusicNode findOne(Long id) {
         return musicNodeRepository.findOne(id);
+    }
+
+    public List<MusicNode> findAll() {
+        return musicNodeRepository.findAll();
     }
 }

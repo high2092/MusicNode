@@ -21,6 +21,10 @@ public class MusicService {
         return music.getId();
     }
 
+    public Music findMusic(Long id) {
+        return musicRepository.findOne(id);
+    }
+
     public List<Music> findMusics() {
         return musicRepository.findAll();
     }
