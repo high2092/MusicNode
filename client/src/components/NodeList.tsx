@@ -25,7 +25,7 @@ const createArrowEdge = ({ source, target }: { source: string; target: string })
 };
 
 const convert = (musicNodeList: IMusicNode[]) => {
-  const initialNodes = musicNodeList.map((node, idx) => ({ id: node.id.toString(), position: calculateNodePosition(idx), data: { label: node.id.toString() } }));
+  const initialNodes = musicNodeList.map((node, idx) => ({ id: node.id.toString(), position: calculateNodePosition(idx), data: { label: node.musicName } }));
   const initialEdges = [];
 
   musicNodeList.forEach(({ id, next }) => {
