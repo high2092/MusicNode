@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { httpGet, httpPost } from '../../utils';
 import { FieldValues, useForm } from 'react-hook-form';
 import { NodeList } from '../../components/NodeList';
-import { MusicList } from '../../components/MusicList';
+import { MusicManager } from '../../components/MusicManager';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -57,8 +57,20 @@ const NodePage = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => 
       </div>
       <hr />
       <div>
-        <div>음악 목록</div>
-        <MusicList musicList={musicList} handleMusicClick={handleMusicClick} />
+        <MusicManager
+          musicList={musicList}
+          handleMusicClick={handleMusicClick}
+          insert={({ id, name, videoId }) => {
+            setMusicList((musicList) => [
+              ...musicList,
+              {
+                id,
+                name,
+                videoId,
+              },
+            ]);
+          }}
+        />
       </div>
     </div>
   );
