@@ -40,7 +40,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
 
     searchButtonRef.current.disabled = true;
 
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?q=${musicName}&type=video&part=snippet&key=AIzaSyBRIksBm7Nk5plCJDZ3LOeUOjFzse9gf1w`, {
+    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(musicName)}&type=video&part=snippet&key=AIzaSyBRIksBm7Nk5plCJDZ3LOeUOjFzse9gf1w`, {
       method: 'GET',
     });
 
