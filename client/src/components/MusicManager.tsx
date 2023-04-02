@@ -17,7 +17,17 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
   const handleMusicSubmit = async (formData: FieldValues) => {
     const { videoId } = formData;
 
-    const response = await httpPost('music', { name: musicName, videoId });
+    let response: Response;
+    response = await fetch(`http://img.youtube.com/vi/${videoId}/mqdefault.jpg`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      alert('유효하지 않은 비디오 ID입니다.');
+      return;
+    }
+
+    response = await httpPost('music', { name: musicName, videoId });
 
     if (response.ok) {
       const { id } = await response.json();
