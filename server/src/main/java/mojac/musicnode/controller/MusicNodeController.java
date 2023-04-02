@@ -1,7 +1,6 @@
 package mojac.musicnode.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mojac.musicnode.domain.Music;
 import mojac.musicnode.domain.MusicNode;
+import mojac.musicnode.exception.NextNodeNotExistsException;
 import mojac.musicnode.service.MusicNodeService;
 import mojac.musicnode.service.MusicService;
 import org.springframework.web.bind.annotation.*;
@@ -67,6 +67,15 @@ public class MusicNodeController {
         return new DeleteNodeResponse(id);
     }
 
+    @GetMapping("/node/{id}/next")
+    public GetNextNodeResponse getNextNode(@PathVariable Long id) {
+        MusicNode node = musicNodeService.findOne(id);
+
+        if (node.getNext() == null) throw new NextNodeNotExistsException();
+
+        return new GetNextNodeResponse(node.getNext().getId());
+    }
+
     @Getter
     @AllArgsConstructor
     static class Result<T> {
@@ -98,6 +107,12 @@ public class MusicNodeController {
     @Getter
     @AllArgsConstructor
     static class DeleteNodeResponse {
+        private Long id;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    static class GetNextNodeResponse {
         private Long id;
     }
 
