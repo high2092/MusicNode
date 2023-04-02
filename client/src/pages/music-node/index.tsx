@@ -7,9 +7,10 @@ import { MusicManager } from '../../components/MusicManager';
 interface NodePageProps {
   initialMusicList: IMusic[];
   initialMusicNodeList: IMusicNode[];
+  nodeCountInRow: number;
 }
 
-const NodePage = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
+const NodePage = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePageProps) => {
   const [musicList, setMusicList] = useState<IMusic[]>(initialMusicList);
   const [musicNodeList, setMusicNodeList] = useState<IMusicNode[]>(initialMusicNodeList);
 
@@ -48,7 +49,7 @@ const NodePage = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => 
     <div>
       <div>
         <div>노드 목록</div>
-        <NodeList musicNodeList={musicNodeList} />
+        <NodeList musicNodeList={musicNodeList} nodeCountInRow={nodeCountInRow} />
         <form onSubmit={handleSubmit(handleCreateMusicNode)}>
           <label>MUSIC ID</label>
           <input {...register('musicId')} disabled />
@@ -76,6 +77,8 @@ const NodePage = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => 
   );
 };
 
+const DEFAULT_NODE_COUNT_IN_A_ROW = 5;
+
 export const getServerSideProps = async () => {
   let response: Response;
 
@@ -85,10 +88,14 @@ export const getServerSideProps = async () => {
   response = await httpGet('node');
   const { data: initialMusicNodeList } = response.ok ? await response.json() : { data: [] };
 
+  response = await httpGet(`member/row`);
+  const { count: nodeCountInRow } = response.ok ? await response.json() : { count: DEFAULT_NODE_COUNT_IN_A_ROW };
+
   return {
     props: {
       initialMusicList,
       initialMusicNodeList,
+      nodeCountInRow,
     },
   };
 };
