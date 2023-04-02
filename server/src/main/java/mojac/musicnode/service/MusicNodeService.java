@@ -23,6 +23,9 @@ public class MusicNodeService {
 
     @Transactional
     public void deleteMusicNode(MusicNode node) {
+        MusicNode.disconnect(node.getPrev());
+        MusicNode.disconnect(node);
+
         musicNodeRepository.delete(node);
     }
 

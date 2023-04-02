@@ -20,10 +20,10 @@ public class MusicNode {
     @ManyToOne(fetch = FetchType.LAZY)
     private Music music;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private MusicNode prev;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     private MusicNode next;
 
     private String color;
