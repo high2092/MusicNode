@@ -8,8 +8,8 @@ interface MusicProps {
 
 export const Music = ({ id, name, videoId }: MusicProps) => {
   return (
-    <S.Music>
+    <S.SelectableDiv>
       {id} | {name} | {videoId}
-    </S.Music>
+    </S.SelectableDiv>
   );
 };

@@ -60,6 +60,7 @@ const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePa
       <div>
         <MusicManager
           musicList={musicList}
+          setMusicList={setMusicList}
           handleMusicClick={handleMusicClick}
           insert={({ id, name, videoId }) => {
             setMusicList((musicList) => [
