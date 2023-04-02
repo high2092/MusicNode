@@ -7,6 +7,14 @@ import { useRouter } from 'next/router';
 import 'reactflow/dist/style.css';
 import { httpDelete, httpPatch } from '../utils';
 
+const ReactFlowObjectTypes = {
+  NODE: 'node',
+  EDGE: 'edge',
+  EDGE_SOURCE: 'source',
+  EDGE_TARGET: 'target',
+  PANE: 'pane',
+};
+
 const calculateNodePosition = (idx: number) => {
   const NODE_DEFAULT_POSITION_X = 50;
   const NODE_DEFAULT_POSITION_Y = 50;
@@ -37,15 +45,13 @@ const convert = (musicNodeList: IMusicNode[]) => {
 
 export const NodeList = ({ musicNodeList }) => {
   const { initialNodes, initialEdges } = convert(musicNodeList);
-  console.log(musicNodeList);
 
   const router = useRouter();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const edgeSourceRef = useRef<string>();
+  const selectedObjectTypeRef = useRef<string>();
 
   useEffect(() => {
-    // console.log(musicNodeList.length, nodes.length, initialNodes.length);
     setNodes(initialNodes); // hook 때문인지 nodes 생명주기가 React에서 분리되어 있는 듯
   }, [musicNodeList]);
 
@@ -64,7 +70,7 @@ export const NodeList = ({ musicNodeList }) => {
   const onConnect = useCallback(
     async (params) => {
       // if (edgeSourceRef.current !== params.source) return; // 편집점과 노드는 아이디가 별개이므로 아래와 같이 작성
-      if (edgeSourceRef.current.includes('target')) return;
+      if (selectedObjectTypeRef.current.includes(ReactFlowObjectTypes.EDGE_TARGET)) return;
 
       const { source: sourceId, target: targetId } = params;
       const response = await httpPatch(`node/${sourceId}?targetId=${targetId}`);
@@ -81,30 +87,38 @@ export const NodeList = ({ musicNodeList }) => {
   );
 
   const handleNodeClick = (e: React.MouseEvent, node: Node) => {
-    if (edgeSourceRef.current.includes('source') || edgeSourceRef.current.includes('target')) return;
+    if (selectedObjectTypeRef.current.includes(ReactFlowObjectTypes.EDGE_SOURCE) || selectedObjectTypeRef.current.includes(ReactFlowObjectTypes.EDGE_TARGET)) return; // 1곡 반복재생 설정하는 인터페이스에 해당
     router.push(`/music-node/${node.id}`);
   };
 
-  const handleMouseDownCapture = (e) => {
-    // ReactFlow 컴포넌트에 onNodeMouseDown 속성이 있었다면 더 좋았을텐데 아쉽다
-    edgeSourceRef.current = e.target.dataset.id;
+  // ReactFlow 컴포넌트에 onNodeMouseDown 속성이 있었다면 더 좋았을텐데 아쉽다
+  const handleReactFlowMouseDownCapture = ({ target }) => {
+    const classListString = target.classList.value;
+
+    for (const i in ReactFlowObjectTypes) {
+      if (classListString.includes(ReactFlowObjectTypes[i])) {
+        selectedObjectTypeRef.current = ReactFlowObjectTypes[i];
+        break;
+      }
+    }
   };
 
   const handleNodesDelete = async (nodes) => {
     const [node] = nodes;
-
     const response = await httpDelete(`node/${node.id}`);
-
     if (!response.ok) {
       setNodes((nodes) => {
         return nodes.concat(node);
       });
     }
+
+    selectedObjectTypeRef.current = null;
   };
 
   const handleEdgesDelete = async (edges) => {
-    const [edge] = edges;
+    if (selectedObjectTypeRef.current === ReactFlowObjectTypes.NODE) return;
 
+    const [edge] = edges;
     const response = await httpPatch(`node/${edge.source}`);
 
     if (!response.ok) {
@@ -112,6 +126,8 @@ export const NodeList = ({ musicNodeList }) => {
         return edges.concat(edge);
       });
     }
+
+    selectedObjectTypeRef.current = null;
   };
 
   return (
@@ -124,7 +140,7 @@ export const NodeList = ({ musicNodeList }) => {
         onEdgeUpdate={handleEdgeUpdate}
         onConnect={onConnect}
         onNodeClick={handleNodeClick}
-        onMouseDownCapture={handleMouseDownCapture}
+        onMouseDownCapture={handleReactFlowMouseDownCapture}
         onNodesDelete={handleNodesDelete}
         onEdgesDelete={handleEdgesDelete}
       />
