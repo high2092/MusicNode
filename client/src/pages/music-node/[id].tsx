@@ -8,15 +8,21 @@ const Node = ({ id, musicId, musicName, videoId, next }) => {
 
   const router = useRouter();
 
-  const handleVideoEnd = ({ target }) => {
-    if (next) {
-      if (id !== next) router.push(`/music-node/${next}`);
-      target.playVideo();
-    }
+  const handleVideoEnd = () => {
+    jumpToNextNode();
   };
 
-  const jumpToNextNode = () => {
-    if (next) router.push(`/music-node/${next}`);
+  const jumpToNextNode = async () => {
+    const response = await httpGet(`node/${id}/next`);
+
+    const { id: next } = await response.json();
+
+    if (!next) {
+      alert('마지막 노드입니다.');
+      return;
+    }
+
+    if (id !== next) router.push(`/music-node/${next}`);
   };
 
   return (
@@ -31,7 +37,7 @@ const Node = ({ id, musicId, musicName, videoId, next }) => {
         }}
         onEnd={handleVideoEnd}
       />
-      <button onClick={jumpToNextNode}>다음 노드: {next ?? '-'}</button>
+      <button onClick={jumpToNextNode}>다음 노드로</button>
     </>
   );
 };
@@ -43,7 +49,7 @@ export const getServerSideProps = async ({ params: { id } }) => {
 
   if (!musicId) return { props: {} };
 
-  return { props: { musicId, musicName, videoId, next } };
+  return { props: { id, musicId, musicName, videoId, next } };
 };
 
 export default Node;
