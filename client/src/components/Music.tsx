@@ -4,11 +4,12 @@ interface MusicProps {
   id: number;
   name: string;
   videoId: string;
+  selected: boolean;
 }
 
-export const Music = ({ id, name, videoId }: MusicProps) => {
+export const Music = ({ id, name, videoId, selected }: MusicProps) => {
   return (
-    <S.SelectableDiv>
+    <S.SelectableDiv count={Number(selected) as 0 | 1}>
       {id} | {name} | {videoId}
     </S.SelectableDiv>
   );

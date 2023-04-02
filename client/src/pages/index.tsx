@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { httpGet, httpPost } from '../utils';
 import { FieldValues, useForm } from 'react-hook-form';
 import { NodeList } from '../components/NodeList';
@@ -13,6 +13,7 @@ interface NodePageProps {
 const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePageProps) => {
   const [musicList, setMusicList] = useState<IMusic[]>(initialMusicList);
   const [musicNodeList, setMusicNodeList] = useState<IMusicNode[]>(initialMusicNodeList);
+  const musicNameRef = useRef<HTMLInputElement>();
 
   console.log(initialMusicList, initialMusicNodeList);
 
@@ -20,6 +21,7 @@ const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePa
 
   const handleMusicClick = (id: number) => () => {
     setValue('musicId', id);
+    musicNameRef.current.value = musicList.find((music) => music.id === id).name;
     console.log(id);
   };
 
@@ -51,8 +53,8 @@ const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePa
         <div>노드 목록</div>
         <NodeList musicNodeList={musicNodeList} nodeCountInRow={nodeCountInRow} />
         <form onSubmit={handleSubmit(handleCreateMusicNode)}>
-          <label>MUSIC ID</label>
-          <input {...register('musicId')} disabled />
+          <label>MUSIC NAME</label>
+          <input ref={musicNameRef} disabled />
           <button>노드 생성하기</button>
         </form>
       </div>

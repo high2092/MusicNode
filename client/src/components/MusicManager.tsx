@@ -12,6 +12,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
   const [musicName, setMusicName] = useState(); // 서버에 전송되는 실제 값
   const musicNameInputRef = useRef<HTMLInputElement>();
   const [latestAutoSetMusicName, setLatestAutoSetMusicName] = useState<string>();
+  const [selectedMusicId, setSelectedMusicId] = useState<number>();
 
   const handleMusicSubmit = async (formData: FieldValues) => {
     const { videoId } = formData;
@@ -58,6 +59,11 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
     setMusicName(target.value);
   };
 
+  const _handleMusicClick = (id: number) => () => {
+    handleMusicClick(id)();
+    setSelectedMusicId(id);
+  };
+
   const getVideoIdInputValue = () => {
     return getValues('videoId');
   };
@@ -78,8 +84,8 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
         <S.MusicList>
           {musicList.map(({ id, name, videoId }) => {
             return (
-              <li key={`music-${id}`} onClick={handleMusicClick(id)}>
-                <Music id={id} name={name} videoId={videoId} />
+              <li key={`music-${id}`} onClick={_handleMusicClick(id)}>
+                <Music id={id} name={name} videoId={videoId} selected={selectedMusicId === id} />
               </li>
             );
           })}
