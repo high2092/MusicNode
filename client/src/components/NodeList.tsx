@@ -87,7 +87,7 @@ export const NodeList = ({ musicNodeList, nodeCountInRow }) => {
 
   const handleNodeClick = (e: React.MouseEvent, node: Node) => {
     if (selectedObjectTypeRef.current.includes(ReactFlowObjectTypes.EDGE_SOURCE) || selectedObjectTypeRef.current.includes(ReactFlowObjectTypes.EDGE_TARGET)) return; // 1곡 반복재생 설정하는 인터페이스에 해당
-    router.push(`/music-node/${node.id}`);
+    window.open(`/music-node/${node.id}`);
   };
 
   // ReactFlow 컴포넌트에 onNodeMouseDown 속성이 있었다면 더 좋았을텐데 아쉽다
