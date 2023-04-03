@@ -1,6 +1,7 @@
 package mojac.musicnode.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
 import mojac.musicnode.domain.MusicNode;
 import org.springframework.stereotype.Repository;
@@ -31,5 +32,15 @@ public class MusicNodeRepository {
     public List<MusicNode> findAll() {
         return em.createQuery("select m from MusicNode m", MusicNode.class)
                 .getResultList();
+    }
+
+    public MusicNode findPrev(MusicNode node) {
+        try {
+            return em.createQuery("select m from MusicNode m where m.next = :next", MusicNode.class)
+                    .setParameter("next", node)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }
