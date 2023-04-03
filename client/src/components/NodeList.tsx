@@ -15,24 +15,12 @@ const ReactFlowObjectTypes = {
   PANE: 'pane',
 };
 
-const calculateNodePosition = (idx: number, nodeCountInRow: number) => {
-  const NODE_DEFAULT_POSITION_X = 50;
-  const NODE_DEFAULT_POSITION_Y = 50;
-  const NODE_POSITION_UNIT_X = 200;
-  const NODE_POSITION_UNIT_Y = 100;
-
-  return {
-    y: NODE_DEFAULT_POSITION_Y + NODE_POSITION_UNIT_Y * Math.floor(idx / nodeCountInRow),
-    x: NODE_DEFAULT_POSITION_X + NODE_POSITION_UNIT_X * (idx % nodeCountInRow),
-  };
-};
-
 const createArrowEdge = ({ source, target }: { source: string; target: string }) => {
   return { id: `e${source}-${target}`, source, target, markerEnd: { type: MarkerType.ArrowClosed }, sourceHandle: null, targetHandle: null };
 };
 
-const convert = (musicNodeList: IMusicNode[], nodeCountInRow: number) => {
-  const initialNodes = musicNodeList.map((node, idx) => ({ id: node.id.toString(), position: calculateNodePosition(idx, nodeCountInRow), data: { label: node.musicName } }));
+const convert = (musicNodeList: IMusicNode[]) => {
+  const initialNodes = musicNodeList.map((node) => ({ id: node.id.toString(), position: node.position, data: { label: node.musicName } }));
   const initialEdges = [];
 
   musicNodeList.forEach(({ id, next }) => {
@@ -42,8 +30,8 @@ const convert = (musicNodeList: IMusicNode[], nodeCountInRow: number) => {
   return { initialNodes, initialEdges };
 };
 
-export const NodeList = ({ musicNodeList, nodeCountInRow }) => {
-  const { initialNodes, initialEdges } = convert(musicNodeList, nodeCountInRow);
+export const NodeList = ({ musicNodeList }) => {
+  const { initialNodes, initialEdges } = convert(musicNodeList);
 
   const router = useRouter();
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);

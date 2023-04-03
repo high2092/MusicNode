@@ -8,24 +8,25 @@ export const httpGet = async (path: string) => {
   return response;
 };
 
-export const httpPost = async (path: string, payload: FieldValues) => {
+export const httpPost = async (path: string, payload?: FieldValues) => {
   const response = await fetch(`${API_HOST}/${path}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(payload ?? {}),
   });
 
   return response;
 };
 
-export const httpPatch = async (path: string) => {
+export const httpPatch = async (path: string, payload?: FieldValues) => {
   const response = await fetch(`${API_HOST}/${path}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
     },
+    body: JSON.stringify(payload ?? {}),
   });
 
   return response;

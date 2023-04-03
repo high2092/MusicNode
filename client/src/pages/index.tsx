@@ -3,14 +3,14 @@ import { httpGet, httpPost } from '../utils';
 import { FieldValues, useForm } from 'react-hook-form';
 import { NodeList } from '../components/NodeList';
 import { MusicManager } from '../components/MusicManager';
+import { Position } from '../domain/Position';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
   initialMusicNodeList: IMusicNode[];
-  nodeCountInRow: number;
 }
 
-const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePageProps) => {
+const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const [musicList, setMusicList] = useState<IMusic[]>(initialMusicList);
   const [musicNodeList, setMusicNodeList] = useState<IMusicNode[]>(initialMusicNodeList);
   const musicNameRef = useRef<HTMLInputElement>();
@@ -42,6 +42,7 @@ const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePa
           musicName: music.name,
           videoId: music.videoId,
           next: undefined,
+          position: new Position(),
         },
       ]);
     }
@@ -51,7 +52,7 @@ const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePa
     <div>
       <div>
         <div>노드 목록</div>
-        <NodeList musicNodeList={musicNodeList} nodeCountInRow={nodeCountInRow} />
+        <NodeList musicNodeList={musicNodeList} />
         <form onSubmit={handleSubmit(handleCreateMusicNode)}>
           <label>MUSIC NAME</label>
           <input ref={musicNameRef} disabled />
@@ -80,8 +81,6 @@ const Home = ({ initialMusicList, initialMusicNodeList, nodeCountInRow }: NodePa
   );
 };
 
-const DEFAULT_NODE_COUNT_IN_A_ROW = 5;
-
 export const getServerSideProps = async () => {
   let response: Response;
 
@@ -91,14 +90,10 @@ export const getServerSideProps = async () => {
   response = await httpGet('node');
   const { data: initialMusicNodeList } = response.ok ? await response.json() : { data: [] };
 
-  response = await httpGet(`member/row`);
-  const { count: nodeCountInRow } = response.ok ? await response.json() : { count: DEFAULT_NODE_COUNT_IN_A_ROW };
-
   return {
     props: {
       initialMusicList,
       initialMusicNodeList,
-      nodeCountInRow,
     },
   };
 };

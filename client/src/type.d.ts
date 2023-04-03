@@ -10,4 +10,10 @@ interface IMusicNode {
   musicName: string;
   videoId: string;
   next: number;
+  position: IPosition;
+}
+
+interface IPosition {
+  x: number;
+  y: number;
 }
