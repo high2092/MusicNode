@@ -1,5 +1,6 @@
 package mojac.musicnode.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mojac.musicnode.domain.Music;
 import mojac.musicnode.domain.MusicNode;
+import mojac.musicnode.domain.Position;
 import mojac.musicnode.exception.NextNodeNotExistsException;
 import mojac.musicnode.service.MusicNodeService;
 import mojac.musicnode.service.MusicService;
@@ -46,17 +48,32 @@ public class MusicNodeController {
         return new CreateNodeResponse(id);
     }
 
-    @PatchMapping("/node/{sourceId}")
-    public ConnectNodeResponse connectNode(@PathVariable Long sourceId, @RequestParam(value = "targetId", required = false) Long targetId) {
-        MusicNode source = musicNodeService.findOne(sourceId);
-        if (targetId != null) {
-            MusicNode target = musicNodeService.findOne(targetId);
-            musicNodeService.connect(source, target);
-        } else {
-            musicNodeService.disconnect(source);
-        }
+    @PostMapping("/node/{id}/disconnect")
+    public DisconnectNodeResponse disconnectNode(@PathVariable Long id) {
+        MusicNode source = musicNodeService.findOne(id);
+        Long targetId = source.getNext().getId();
 
-        return new ConnectNodeResponse(sourceId, targetId);
+        musicNodeService.disconnect(source);
+
+        return new DisconnectNodeResponse(id, targetId);
+    }
+
+    @PatchMapping("/node/{id}")
+    @JsonInclude
+    public PatchNodeResponse patchNode(@PathVariable Long id, @RequestBody PatchNodeRequest request) {
+        MusicNode node = musicNodeService.findOne(id);
+        Long nextId = request.getNext();
+        MusicNode next;
+        if (nextId != null) {
+            next = musicNodeService.findOne(request.getNext());
+        } else {
+            next = null;
+        }
+        String color = request.getColor();
+        Position position = request.getPosition();
+        musicNodeService.patchMusicNode(node, next, color, position);
+
+        return new PatchNodeResponse(id, nextId, color, position);
     }
 
     @DeleteMapping("/node/{id}")
@@ -97,9 +114,10 @@ public class MusicNodeController {
         private Long id;
     }
 
+
     @Getter
     @AllArgsConstructor
-    static class ConnectNodeResponse {
+    static class DisconnectNodeResponse {
         private Long source;
         private Long target;
     }
@@ -114,6 +132,22 @@ public class MusicNodeController {
     @AllArgsConstructor
     static class GetNextNodeResponse {
         private Long id;
+    }
+
+    @Getter
+    static class PatchNodeRequest {
+        private Long next;
+        private String color;
+        private Position position;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    static class PatchNodeResponse {
+        private Long id;
+        private Long next;
+        private String color;
+        private Position position;
     }
 
     @Getter
@@ -136,8 +170,4 @@ public class MusicNodeController {
             if (musicNode.getNext() != null) this.next = musicNode.getNext().getId();
         }
     }
-
-
-
-
 }

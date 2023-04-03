@@ -2,6 +2,7 @@ package mojac.musicnode.service;
 
 import lombok.RequiredArgsConstructor;
 import mojac.musicnode.domain.MusicNode;
+import mojac.musicnode.domain.Position;
 import mojac.musicnode.repository.MusicNodeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,11 @@ public class MusicNodeService {
         MusicNode.disconnect(node);
 
         musicNodeRepository.delete(node);
+    }
+
+    @Transactional
+    public void patchMusicNode(MusicNode node, MusicNode next, String color, Position position) {
+        node.patch(next, color, position);
     }
 
     public MusicNode findOne(Long id) {

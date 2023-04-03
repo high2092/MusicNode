@@ -36,6 +36,12 @@ public class MusicNode {
         this.color = color;
     }
 
+    public void patch(MusicNode next, String color, Position position) {
+        if (next != null) this.next = next;
+        if (color != null) this.color = color;
+        if (position != null) this.position = position;
+    }
+
     public static void insert(MusicNode p, MusicNode n) {
         n.next = p.next;
         p.next = n;
