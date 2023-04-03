@@ -27,7 +27,7 @@ const Node = ({ id, musicId, musicName, videoId, next }) => {
 
   return (
     <>
-      <Link href="/music-node">목록</Link>
+      <Link href="/">목록</Link>
       <YouTube
         videoId={videoId}
         opts={{
