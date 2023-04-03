@@ -4,6 +4,7 @@ export const MusicManager = styled.div`
   display: flex;
 
   & > * {
+    flex: 1;
     padding: 1rem;
     margin: 0.2rem;
     border: 1px solid black;
@@ -12,7 +13,7 @@ export const MusicManager = styled.div`
 `;
 
 export const MusicList = styled.ul`
-  width: max-content;
+  flex-grow: 1;
   height: 30vh;
   overflow: scroll;
 `;

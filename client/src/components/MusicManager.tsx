@@ -5,6 +5,17 @@ import * as S from './styles/MusicManager';
 import { FieldValues, useForm } from 'react-hook-form';
 import { SearchResultList } from './SearchResultList';
 
+class SearchFilter {
+  trim(value: string) {
+    return value.toLowerCase().replace(/(\s*)/g, '');
+  }
+  filter(collection: IMusic[], query: string) {
+    return collection.filter(({ name }) => {
+      return this.trim(name).includes(this.trim(query));
+    });
+  }
+}
+
 export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert }) => {
   const { register, handleSubmit, getValues, setValue } = useForm();
   const searchButtonRef = useRef<HTMLButtonElement>();
@@ -13,6 +24,9 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
   const musicNameInputRef = useRef<HTMLInputElement>();
   const [latestAutoSetMusicName, setLatestAutoSetMusicName] = useState<string>();
   const [selectedMusicId, setSelectedMusicId] = useState<number>();
+  const searchFilter = new SearchFilter();
+  const [query, setQuery] = useState<string>('');
+  const filteredMusicList = searchFilter.filter(musicList, query);
 
   const handleMusicSubmit = async (formData: FieldValues) => {
     const { videoId } = formData;
@@ -90,9 +104,15 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
   return (
     <S.MusicManager>
       <div>
-        <div>음악 목록</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>음악 목록</div>
+          <div>
+            <label>필터</label>
+            <input onChange={(e) => setQuery(e.target.value)} />
+          </div>
+        </div>
         <S.MusicList>
-          {musicList.map(({ id, name, videoId }) => {
+          {filteredMusicList.map(({ id, name, videoId }) => {
             return (
               <li key={`music-${id}`} onClick={_handleMusicClick(id)}>
                 <Music id={id} name={name} videoId={videoId} selected={selectedMusicId === id} />
