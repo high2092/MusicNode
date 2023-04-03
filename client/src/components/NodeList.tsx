@@ -5,7 +5,7 @@ import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
 
 import 'reactflow/dist/style.css';
-import { httpDelete, httpPatch } from '../utils';
+import { httpDelete, httpPatch, httpPost } from '../utils';
 
 const ReactFlowObjectTypes = {
   NODE: 'node',
@@ -55,8 +55,8 @@ export const NodeList = ({ musicNodeList, nodeCountInRow }) => {
   }, [musicNodeList]);
 
   const handleEdgeUpdate = async (oldEdge, newConnection) => {
-    const { source: sourceId, target: targetId } = newConnection;
-    const response = await httpPatch(`node/${sourceId}?targetId=${targetId}`);
+    const { source: id, target: next } = newConnection;
+    const response = await httpPatch(`node/${id}`, { next });
     if (response.ok) {
       setEdges((edges) => {
         edges = edges.filter((edge) => edge.id !== oldEdge.id);
@@ -71,8 +71,8 @@ export const NodeList = ({ musicNodeList, nodeCountInRow }) => {
       // if (edgeSourceRef.current !== params.source) return; // 편집점과 노드는 아이디가 별개이므로 아래와 같이 작성
       if (selectedObjectTypeRef.current.includes(ReactFlowObjectTypes.EDGE_TARGET)) return;
 
-      const { source: sourceId, target: targetId } = params;
-      const response = await httpPatch(`node/${sourceId}?targetId=${targetId}`);
+      const { source: id, target: next } = params;
+      const response = await httpPatch(`node/${id}`, { next });
 
       if (response.ok) {
         setEdges((edges) => {
@@ -118,7 +118,7 @@ export const NodeList = ({ musicNodeList, nodeCountInRow }) => {
     if (selectedObjectTypeRef.current === ReactFlowObjectTypes.NODE) return;
 
     const [edge] = edges;
-    const response = await httpPatch(`node/${edge.source}`);
+    const response = await httpPost(`node/${edge.source}/disconnect`, {});
 
     if (!response.ok) {
       setEdges((edges) => {
@@ -129,12 +129,27 @@ export const NodeList = ({ musicNodeList, nodeCountInRow }) => {
     selectedObjectTypeRef.current = null;
   };
 
+  const _onNodesChange = async (changes) => {
+    onNodesChange(changes);
+
+    const { id, type } = changes[0];
+    if (type === 'position') {
+      const { position } = nodes.find((node) => node.id === id);
+
+      const response = await httpPatch(`node/${id}`, { position: position });
+
+      if (!response.ok) {
+        console.log('patch failed');
+      }
+    }
+  };
+
   return (
     <S.NodeList>
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodesChange={onNodesChange}
+        onNodesChange={_onNodesChange}
         onEdgesChange={onEdgesChange}
         onEdgeUpdate={handleEdgeUpdate}
         onConnect={onConnect}
