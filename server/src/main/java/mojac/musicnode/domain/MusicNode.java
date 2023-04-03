@@ -21,9 +21,6 @@ public class MusicNode {
     private Music music;
 
     @OneToOne
-    private MusicNode prev;
-
-    @OneToOne
     private MusicNode next;
 
     private String color;
@@ -40,24 +37,14 @@ public class MusicNode {
 
     public static void insert(MusicNode p, MusicNode n) {
         n.next = p.next;
-        n.prev = p;
-
-        if (p.next != null) p.next.prev = n;
         p.next = n;
     }
 
     public static void connect(MusicNode source, MusicNode target) {
-        if (source.next != null) {
-            source.next.prev = null;
-        }
         source.next = target;
-        target.prev = source;
     }
 
     public static void disconnect(MusicNode source) {
-        if (source.next != null) {
-            source.next.prev = null;
-            source.next = null;
-        }
+        source.next = null;
     }
 }
