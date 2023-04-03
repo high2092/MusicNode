@@ -158,6 +158,7 @@ public class MusicNodeController {
         private String musicName;
         private String videoId;
         private Long next;
+        private Position position;
 
         public MusicNodeDto(MusicNode musicNode) {
 
@@ -168,6 +169,7 @@ public class MusicNodeController {
             this.musicName = music.getName();
             this.videoId = music.getVideoId();
             if (musicNode.getNext() != null) this.next = musicNode.getNext().getId();
+            this.position = musicNode.getPosition();
         }
     }
 }
