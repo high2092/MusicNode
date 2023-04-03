@@ -24,6 +24,7 @@ public class MusicNode {
     private MusicNode next;
 
     private String color;
+    private Position position = new Position();
 
     protected MusicNode() {}
     public MusicNode(Music music) {
