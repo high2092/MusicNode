@@ -30,7 +30,7 @@ const convert = (musicNodeList: IMusicNode[]) => {
   return { initialNodes, initialEdges };
 };
 
-export const NodeList = ({ musicNodeList }) => {
+export const NodeList = ({ musicNodeList, setMusicNodeList }) => {
   const { initialNodes, initialEdges } = convert(musicNodeList);
 
   const router = useRouter();
@@ -119,17 +119,24 @@ export const NodeList = ({ musicNodeList }) => {
 
   const _onNodesChange = async (changes) => {
     onNodesChange(changes);
+  };
 
-    const { id, type } = changes[0];
-    if (type === 'position') {
-      const { position } = nodes.find((node) => node.id === id);
+  const handleNodeDragStop = async (e, { id, position }) => {
+    const response = await httpPatch(`node/${id}`, { position: position });
 
-      const response = await httpPatch(`node/${id}`, { position: position });
-
-      if (!response.ok) {
-        console.log('patch failed');
-      }
+    if (!response.ok) {
+      console.log('patch failed');
     }
+
+    const node = musicNodeList.find((node) => node.id === Number(id));
+
+    setMusicNodeList((musicNodeList) => [
+      ...musicNodeList,
+      {
+        ...node,
+        position,
+      },
+    ]);
   };
 
   return (
@@ -140,6 +147,7 @@ export const NodeList = ({ musicNodeList }) => {
         onNodesChange={_onNodesChange}
         onEdgesChange={onEdgesChange}
         onEdgeUpdate={handleEdgeUpdate}
+        onNodeDragStop={handleNodeDragStop}
         onConnect={onConnect}
         onNodeClick={handleNodeClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
