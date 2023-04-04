@@ -52,7 +52,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
     <div>
       <div>
         <div>노드 목록</div>
-        <NodeList musicNodeList={musicNodeList} />
+        <NodeList musicNodeList={musicNodeList} setMusicNodeList={setMusicNodeList} />
         <form onSubmit={handleSubmit(handleCreateMusicNode)}>
           <label>MUSIC NAME</label>
           <input ref={musicNameRef} disabled />
