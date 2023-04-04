@@ -122,7 +122,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
         </S.MusicList>
       </div>
 
-      <div>
+      <S.SearchBox>
         <div>음악 추가</div>
         <form onSubmit={handleSubmit(handleMusicSubmit)}>
           <S.MusicNameInput ref={musicNameInputRef} placeholder="이름" onKeyDown={handleMusicNameInputKeyDown} onChange={handleMusicNameInputChange} byUser={musicName !== latestAutoSetMusicName} />
@@ -142,7 +142,23 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert
           setMusicNameInputValue={setMusicNameInputValue}
           setVideoIdInputValue={setVideoIdInputValue}
         />
-      </div>
+      </S.SearchBox>
+      <S.MiniPlayer>
+        <S.MiniPlayerDecoration>
+          <S.MiniPlayerDecorationImoticonText>٩( ᐛ )و</S.MiniPlayerDecorationImoticonText>
+          <S.MiniPlayerDecorationNowPlayingText>{`~ Now Playing ~`}</S.MiniPlayerDecorationNowPlayingText>
+          <S.MiniPlayerDecorationImoticonText>٩(ˊᗜˋ*)و</S.MiniPlayerDecorationImoticonText>
+        </S.MiniPlayerDecoration>
+        <S.MiniPlayerMusicInfo>
+          <img src="https://img.youtube.com/vi/kqe-Na05TT0/mqdefault.jpg" />
+          <S.MiniPlayMusicTitle>동그리코</S.MiniPlayMusicTitle>
+        </S.MiniPlayerMusicInfo>
+        <S.MiniPlayerController>
+          <div>{`<<`}</div>
+          <div>{`||`}</div>
+          <div>{`>>`}</div>
+        </S.MiniPlayerController>
+      </S.MiniPlayer>
     </S.MusicManager>
   );
 };

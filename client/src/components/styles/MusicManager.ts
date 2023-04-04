@@ -4,8 +4,8 @@ export const MusicManager = styled.div`
   display: flex;
 
   & > * {
-    flex: 1;
     padding: 1rem;
+    height: 34vh;
     margin: 0.2rem;
     border: 1px solid black;
     border-radius: 5px;
@@ -13,9 +13,60 @@ export const MusicManager = styled.div`
 `;
 
 export const MusicList = styled.ul`
-  flex-grow: 1;
+  width: 40vw;
   height: 30vh;
   overflow: scroll;
+`;
+
+export const SearchBox = styled.div``;
+
+export const MiniPlayer = styled.div`
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
+export const MiniPlayerDecoration = styled.div`
+  flex: 2;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  * {
+    text-align: center;
+  }
+
+  width: 80%;
+`;
+
+export const MiniPlayerDecorationImoticonText = styled.div`
+  width: 3rem;
+`;
+
+export const MiniPlayerDecorationNowPlayingText = styled.div`
+  flex-grow: 1;
+`;
+
+export const MiniPlayerMusicInfo = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const MiniPlayerController = styled.div`
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 30%;
+`;
+
+export const MiniPlayMusicTitle = styled.div`
+  font-size: 1.2rem;
 `;
 
 export const MusicNameInput = styled.input<{ byUser: boolean }>`
