@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { httpGet, httpPost } from '../utils';
+import { httpGet, httpPost } from '../utils/common';
 import { Music } from './Music';
 import * as S from './styles/MusicManager';
 import { FieldValues, useForm } from 'react-hook-form';

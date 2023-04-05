@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { httpGet } from '../../utils';
+import { httpGet } from '../../utils/common';
 import YouTube from 'react-youtube';
 import Link from 'next/link';
 

@@ -1,5 +1,5 @@
 import { FieldValues } from 'react-hook-form';
-import { API_HOST } from './constants';
+import { API_HOST } from '../constants';
 
 export const httpGet = async (path: string) => {
   const response = await fetch(`${API_HOST}/${path}`, {
