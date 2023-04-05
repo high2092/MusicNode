@@ -7,6 +7,7 @@ import { httpDelete, httpPatch, httpPost } from '../utils/common';
 import { ReactFlowObjectTypes, convertClassListStringToReactFlowType, convertMusicNodeToReactFlowObject, createArrowEdge } from '../utils/ReactFlow';
 
 import 'reactflow/dist/style.css';
+import { MusicNode } from '../domain/MusicNode';
 
 class SelectedObject {
   id: string;
@@ -102,10 +103,10 @@ export const NodeList = ({ musicNodeList, setMusicNodeList }) => {
 
     setMusicNodeList((musicNodeList) => [
       ...musicNodeList,
-      {
+      new MusicNode({
         ...node,
         position,
-      },
+      }),
     ]);
   };
 

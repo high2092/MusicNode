@@ -1,4 +1,5 @@
 import { MarkerType } from 'reactflow';
+import { ReactFlowNode } from '../domain/ReactFlowNode';
 
 export const ReactFlowObjectTypes = {
   NODE: 'node',
@@ -167,16 +168,10 @@ export const convertMusicNodeToReactFlowObject = (musicNodeList: IMusicNode[]) =
 
   const TEST_COLORS = Array.from({ length: groupNum + 1 }, () => generateRandomHexColor());
 
-  const initialNodes = musicNodeList.map((node, idx) => ({
-    id: node.id.toString(),
-    position: node.position,
-    data: { label: node.musicName },
-    group: group[node.id],
-    style: {
-      backgroundColor: `${mixColor(WHITE, lightenColor(TEST_COLORS[group[node.id]] ?? TEST_COLOR, 순서에_따른_연하게_할_수준_결정(rank[node.id], groups[group[node.id]].length) * SPECTRUM_FACTOR), DEFAULT_WHITE_PAINT_RATIO)}`,
-      fontWeight: 'bold',
-    },
-  }));
+  const initialNodes = musicNodeList.map(
+    (node) =>
+      new ReactFlowNode(node, node.position, `${mixColor(WHITE, lightenColor(TEST_COLORS[group[node.id]] ?? TEST_COLOR, 순서에_따른_연하게_할_수준_결정(rank[node.id], groups[group[node.id]].length) * SPECTRUM_FACTOR), DEFAULT_WHITE_PAINT_RATIO)}`)
+  );
 
   const initialEdges = [];
 

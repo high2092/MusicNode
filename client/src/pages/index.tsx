@@ -4,6 +4,8 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { NodeList } from '../components/NodeList';
 import { MusicManager } from '../components/MusicManager';
 import { Position } from '../domain/Position';
+import { MusicNode } from '../domain/MusicNode';
+import { Music } from '../domain/Music';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -34,17 +36,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
       const { id } = await response.json();
 
       const music = musicList.find((music) => music.id === musicId);
-      setMusicNodeList((musicNodeList) => [
-        ...musicNodeList,
-        {
-          id,
-          musicId: music.id,
-          musicName: music.name,
-          videoId: music.videoId,
-          next: undefined,
-          position: new Position(),
-        },
-      ]);
+      setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
     }
   };
 
@@ -66,14 +58,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
           setMusicList={setMusicList}
           handleMusicClick={handleMusicClick}
           insert={({ id, name, videoId }) => {
-            setMusicList((musicList) => [
-              ...musicList,
-              {
-                id,
-                name,
-                videoId,
-              },
-            ]);
+            setMusicList((musicList) => [...musicList, new Music({ id, name, videoId })]);
           }}
         />
       </div>
