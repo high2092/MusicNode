@@ -16,7 +16,7 @@ class SearchFilter {
   }
 }
 
-export const MusicManager = ({ musicList, setMusicList, handleMusicClick, insert }) => {
+export const MusicManager = ({ musicList, setMusicList, handleMusicClick }) => {
   const { register, handleSubmit, getValues, setValue } = useForm();
   const searchButtonRef = useRef<HTMLButtonElement>();
   const [searchResultList, setSearchResultList] = useState([]);

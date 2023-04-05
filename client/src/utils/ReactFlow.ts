@@ -168,16 +168,21 @@ export const convertMusicNodeToReactFlowObject = (musicNodeList: IMusicNode[]) =
 
   const TEST_COLORS = Array.from({ length: groupNum + 1 }, () => generateRandomHexColor());
 
-  const initialNodes = musicNodeList.map(
-    (node) =>
-      new ReactFlowNode(node, node.position, `${mixColor(WHITE, lightenColor(TEST_COLORS[group[node.id]] ?? TEST_COLOR, 순서에_따른_연하게_할_수준_결정(rank[node.id], groups[group[node.id]].length) * SPECTRUM_FACTOR), DEFAULT_WHITE_PAINT_RATIO)}`)
+  const nodes = musicNodeList.map(
+    ({ id, musicName, position }) =>
+      new ReactFlowNode({
+        id,
+        musicName,
+        position,
+        backgroundColor: `${mixColor(WHITE, lightenColor(TEST_COLORS[group[id]] ?? TEST_COLOR, 순서에_따른_연하게_할_수준_결정(rank[id], groups[group[id]].length) * SPECTRUM_FACTOR), DEFAULT_WHITE_PAINT_RATIO)}`,
+      })
   );
 
-  const initialEdges = [];
+  const edges = [];
 
   musicNodeList.forEach(({ id, next }) => {
-    if (next) initialEdges.push({ source: id.toString(), target: next.toString(), id: `e${id}-${next}`, markerEnd: { type: MarkerType.Arrow } });
+    if (next) edges.push({ source: id.toString(), target: next.toString(), id: `e${id}-${next}`, markerEnd: { type: MarkerType.Arrow } });
   });
 
-  return { initialNodes, initialEdges };
+  return { nodes, edges };
 };

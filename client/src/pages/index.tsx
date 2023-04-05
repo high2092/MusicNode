@@ -1,11 +1,15 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { httpGet, httpPost } from '../utils/common';
 import { FieldValues, useForm } from 'react-hook-form';
 import { NodeList } from '../components/NodeList';
 import { MusicManager } from '../components/MusicManager';
 import { Position } from '../domain/Position';
 import { MusicNode } from '../domain/MusicNode';
-import { Music } from '../domain/Music';
+import { convertMusicNodeToReactFlowObject } from '../utils/ReactFlow';
+import { useEdgesState, useNodesState } from 'reactflow';
+import { useRecoilState } from 'recoil';
+import { musicNodeListAtom } from '../store';
+import { ReactFlowNode } from '../domain/ReactFlowNode';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -14,10 +18,17 @@ interface NodePageProps {
 
 const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const [musicList, setMusicList] = useState<IMusic[]>(initialMusicList);
-  const [musicNodeList, setMusicNodeList] = useState<IMusicNode[]>(initialMusicNodeList);
+  const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
+
   const musicNameRef = useRef<HTMLInputElement>();
 
-  console.log(initialMusicList, initialMusicNodeList);
+  const { nodes: initialNodes, edges: initialEdges } = convertMusicNodeToReactFlowObject(initialMusicNodeList);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  useEffect(() => {
+    setMusicNodeList(initialMusicNodeList);
+  }, []);
 
   const { register, handleSubmit, setValue } = useForm();
 
@@ -37,6 +48,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
 
       const music = musicList.find((music) => music.id === musicId);
       setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
+      setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name })));
     }
   };
 
@@ -44,7 +56,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
     <div>
       <div>
         <div>노드 목록</div>
-        <NodeList musicNodeList={musicNodeList} setMusicNodeList={setMusicNodeList} />
+        <NodeList nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} />
         <form onSubmit={handleSubmit(handleCreateMusicNode)}>
           <label>MUSIC NAME</label>
           <input ref={musicNameRef} disabled />
@@ -53,14 +65,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
       </div>
       <hr />
       <div>
-        <MusicManager
-          musicList={musicList}
-          setMusicList={setMusicList}
-          handleMusicClick={handleMusicClick}
-          insert={({ id, name, videoId }) => {
-            setMusicList((musicList) => [...musicList, new Music({ id, name, videoId })]);
-          }}
-        />
+        <MusicManager musicList={musicList} setMusicList={setMusicList} handleMusicClick={handleMusicClick} />
       </div>
     </div>
   );

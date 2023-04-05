@@ -5,9 +5,11 @@ import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
 import { httpDelete, httpPatch, httpPost } from '../utils/common';
 import { ReactFlowObjectTypes, convertClassListStringToReactFlowType, convertMusicNodeToReactFlowObject, createArrowEdge } from '../utils/ReactFlow';
+import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
+import { musicNodeListAtom } from '../store';
 
 class SelectedObject {
   id: string;
@@ -16,17 +18,10 @@ class SelectedObject {
 
 type ReactFlowObjectType = typeof ReactFlowObjectTypes[keyof typeof ReactFlowObjectTypes];
 
-export const NodeList = ({ musicNodeList, setMusicNodeList }) => {
-  const { initialNodes, initialEdges } = convertMusicNodeToReactFlowObject(musicNodeList);
+export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }) => {
+  const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
 
-  const router = useRouter();
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const selectedObjectRef = useRef<SelectedObject>(new SelectedObject());
-
-  useEffect(() => {
-    setNodes(initialNodes); // hook 때문인지 nodes 생명주기가 React에서 분리되어 있는 듯
-  }, [musicNodeList]);
 
   const handleEdgeUpdate = async (oldEdge, newConnection) => {
     const { source: id, target: next } = newConnection;

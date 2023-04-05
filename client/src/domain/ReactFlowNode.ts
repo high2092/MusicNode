@@ -7,16 +7,23 @@ const generateRandomHexColor = () => {
     .padStart(6, '0')}`;
 };
 
+interface ReactFlowNodeConstructorProps {
+  id: number;
+  musicName: string;
+  position?: Position;
+  backgroundColor?: string;
+}
+
 export class ReactFlowNode {
   id: string;
   data: { label: string };
   position: Position;
   style: { backgroundColor: string };
 
-  constructor({ id, musicName }: MusicNode, position: Position, backgroundColor?: string) {
+  constructor({ id, musicName, position, backgroundColor }: ReactFlowNodeConstructorProps) {
     this.id = id.toString();
     this.data = { label: musicName };
-    this.position = position;
+    this.position = position ?? new Position();
     this.style = { backgroundColor: backgroundColor ?? generateRandomHexColor() };
   }
 }
