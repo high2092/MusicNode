@@ -11,3 +11,5 @@
 #.pnp.*
 
 .next
+
+.DS_Store
