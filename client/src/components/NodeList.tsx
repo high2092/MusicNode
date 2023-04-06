@@ -3,8 +3,8 @@ import * as S from './styles/NodeList';
 import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType } from 'reactflow';
 import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
-import { httpDelete, httpPatch, httpPost } from '../utils/common';
-import { ReactFlowObjectTypes, convertClassListStringToReactFlowType, convertMusicNodeToReactFlowObject, createArrowEdge } from '../utils/ReactFlow';
+import { httpDelete, httpPatch, httpPost, validateVideoId } from '../utils/common';
+import { DragTransferTypes, ReactFlowObjectTypes, convertClassListStringToReactFlowType, convertMusicNodeToReactFlowObject, createArrowEdge } from '../utils/ReactFlow';
 import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
@@ -12,6 +12,7 @@ import { MusicNode } from '../domain/MusicNode';
 import { currentMusicNodeInfoAtom, isPlayingAtom, musicListAtom, musicNodeListAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { Position } from '../domain/Position';
+import { Music } from '../domain/Music';
 
 class SelectedObject {
   id: string;
@@ -21,7 +22,7 @@ class SelectedObject {
 type ReactFlowObjectType = typeof ReactFlowObjectTypes[keyof typeof ReactFlowObjectTypes];
 
 export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }) => {
-  const [musicList] = useRecoilState(musicListAtom);
+  const [musicList, setMusicList] = useRecoilState(musicListAtom);
   const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
   const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
@@ -139,14 +140,34 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     e.preventDefault();
     const { musicId, musicName, type, videoId } = JSON.parse(e.dataTransfer.getData('application/reactflow'));
 
-    const response = await httpPost('node', { musicId });
+    switch (type) {
+      case DragTransferTypes.SEARCH_RESULT: {
+        if (!validateVideoId(videoId)) return;
 
-    if (response.ok) {
-      const { id } = await response.json();
+        const response = await httpPost('node/simple', { musicName, videoId }); // TODO: API 하나 따로 만들기
 
-      const music = musicList.find((music) => music.id === musicId);
-      setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
-      setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
+        if (response.ok) {
+          const { musicId, nodeId } = await response.json();
+          console.log(musicId, nodeId);
+          setMusicList((musicList) => [...musicList, new Music({ id: musicId, name: musicName, videoId })]);
+          setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id: nodeId, musicId, videoId, musicName })]);
+          setNodes((nodes) => nodes.concat(new ReactFlowNode({ id: nodeId, musicName, videoId })));
+        }
+        break;
+      }
+
+      case DragTransferTypes.MUSIC: {
+        const response = await httpPost('node', { musicId });
+
+        if (response.ok) {
+          const { id } = await response.json();
+
+          const music = musicList.find((music) => music.id === musicId);
+          setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
+          setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
+        }
+        break;
+      }
     }
   };
 

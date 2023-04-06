@@ -1,6 +1,11 @@
 import { MarkerType } from 'reactflow';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 
+export const DragTransferTypes = {
+  MUSIC: 'dragTransferMusic',
+  SEARCH_RESULT: 'dragTransferSearchResult',
+};
+
 export const ReactFlowObjectTypes = {
   NODE: 'node',
   EDGE: 'edge',

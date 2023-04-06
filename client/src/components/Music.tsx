@@ -1,3 +1,5 @@
+import { DragTransferData } from '../domain/DragTransferData';
+import { DragTransferTypes } from '../utils/ReactFlow';
 import * as S from './styles/Music';
 
 interface MusicProps {
@@ -6,27 +8,6 @@ interface MusicProps {
   videoId: string;
   selected: boolean;
 }
-
-class DragTransferData {
-  musicId?: number;
-  musicName: string;
-  videoId: string;
-  type: DragTransferType;
-
-  constructor({ musicId, musicName, videoId, type }: DragTransferData) {
-    this.musicId = musicId;
-    this.musicName = musicName;
-    this.videoId = videoId;
-    this.type = type;
-  }
-}
-
-const DragTransferTypes = {
-  MUSIC: 'dragTransferMusic',
-  SEARCH_RESULT: 'dragTransferSearchResult',
-};
-
-type DragTransferType = typeof DragTransferTypes[keyof typeof DragTransferTypes];
 
 export const Music = ({ id, name, videoId, selected }: MusicProps) => {
   const handleDragStart = (e: React.DragEvent, data: DragTransferData) => {

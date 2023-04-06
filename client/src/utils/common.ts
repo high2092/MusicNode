@@ -46,3 +46,16 @@ export const shortenMusicName = (name: string) => {
   if (name.length <= LIMIT_LEN) return name;
   else return `${name.substring(0, 30)}...`;
 };
+
+export const validateVideoId = async (videoId) => {
+  const response = await fetch(`http://img.youtube.com/vi/${videoId}/mqdefault.jpg`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    alert('유효하지 않은 비디오 ID입니다.');
+    return;
+  }
+
+  return response.ok;
+};

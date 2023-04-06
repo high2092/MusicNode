@@ -1,7 +1,21 @@
 import { useState } from 'react';
 import * as S from './styles/Music';
+import { DragTransferTypes } from '../utils/ReactFlow';
+import { DragTransferData } from '../domain/DragTransferData';
 
-export const SearchResultList = ({ musicName: name, latestAutoSetMusicName, setLatestAutoSetMusicName, searchResultList, getVideoIdInputValue, setMusicNameInputValue, setVideoIdInputValue }) => {
+type DragTransferType = typeof DragTransferTypes[keyof typeof DragTransferTypes];
+
+interface SearchResultListProps {
+  musicName;
+  latestAutoSetMusicName;
+  setLatestAutoSetMusicName;
+  searchResultList: { title: string; videoId: string }[];
+  getVideoIdInputValue;
+  setMusicNameInputValue;
+  setVideoIdInputValue;
+}
+
+export const SearchResultList = ({ musicName: name, latestAutoSetMusicName, setLatestAutoSetMusicName, searchResultList, getVideoIdInputValue, setMusicNameInputValue, setVideoIdInputValue }: SearchResultListProps) => {
   const [selectedSearchResultId, setSelectedSearchResultId] = useState<string>();
 
   const handleSearchResultClick = (videoId: string, title) => () => {
@@ -24,10 +38,21 @@ export const SearchResultList = ({ musicName: name, latestAutoSetMusicName, setL
     return 1;
   };
 
+  const handleDragStart = (e: React.DragEvent, data: DragTransferData) => {
+    e.dataTransfer.setData('application/reactflow', JSON.stringify(data));
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
   return (
     <div>
       {searchResultList.map(({ videoId, title }) => (
-        <S.SelectableDiv key={videoId} onClick={handleSearchResultClick(videoId, title)} count={calculateHighlightStrength(videoId, title)}>
+        <S.SelectableDiv
+          key={videoId}
+          onClick={handleSearchResultClick(videoId, title)}
+          count={calculateHighlightStrength(videoId, title)}
+          onDragStart={(e) => handleDragStart(e, new DragTransferData({ videoId, musicName: title, type: DragTransferTypes.SEARCH_RESULT }))}
+          draggable
+        >
           {title}
         </S.SelectableDiv>
       ))}

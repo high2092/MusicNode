@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { httpGet, httpPost, shortenMusicName } from '../utils/common';
+import { httpGet, httpPost, shortenMusicName, validateVideoId } from '../utils/common';
 import { Music } from './Music';
 import * as S from './styles/MusicManager';
 import { FieldValues, useForm } from 'react-hook-form';
@@ -46,17 +46,9 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
   const handleMusicSubmit = async (formData: FieldValues) => {
     const { videoId } = formData;
 
-    let response: Response;
-    response = await fetch(`http://img.youtube.com/vi/${videoId}/mqdefault.jpg`, {
-      method: 'GET',
-    });
+    if (!validateVideoId(videoId)) return;
 
-    if (!response.ok) {
-      alert('유효하지 않은 비디오 ID입니다.');
-      return;
-    }
-
-    response = await httpPost('music', { name: musicName, videoId });
+    const response = await httpPost('music', { name: musicName, videoId });
 
     if (response.ok) {
       const { id } = await response.json();
