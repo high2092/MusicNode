@@ -17,3 +17,9 @@ interface IPosition {
   x: number;
   y: number;
 }
+
+interface IMusicNodeInfo {
+  id: string;
+  musicName: string;
+  videoId: string;
+}

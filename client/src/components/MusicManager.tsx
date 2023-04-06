@@ -7,6 +7,7 @@ import { SearchResultList } from './SearchResultList';
 import { useRecoilState } from 'recoil';
 import { currentMusicNodeInfoAtom, isPlayingAtom } from '../store';
 import YouTube from 'react-youtube';
+import { usePrevMusicNodeStack } from './hooks/usePrevMusicNodeStack';
 
 class SearchFilter {
   trim(value: string) {
@@ -31,6 +32,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
   const [query, setQuery] = useState<string>('');
   const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom);
+  const prevMusicNodeStack = usePrevMusicNodeStack();
 
   const filteredMusicList = searchFilter.filter(musicList, query);
 
@@ -128,6 +130,14 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
     jumpToNextNode();
   };
 
+  const handleGoPrevButtonClick = () => {
+    if (prevMusicNodeStack.empty()) {
+      alert('이전에 재생한 곡이 없어요.');
+      return;
+    }
+    setCurrentMusicInfo(prevMusicNodeStack.pop());
+  };
+
   const jumpToNextNode = async () => {
     const { id } = currentMusicInfo;
     let response = await httpGet(`node/${id}/next`);
@@ -143,6 +153,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
 
     const { musicId, musicName, videoId } = await response.json();
 
+    prevMusicNodeStack.push(currentMusicInfo);
     setCurrentMusicInfo({ id: next, musicName, videoId });
   };
 
@@ -212,7 +223,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
           <S.MiniPlayMusicTitle>{shortenMusicName(currentMusicInfo.musicName)}</S.MiniPlayMusicTitle>
         </S.MiniPlayerMusicInfo>
         <S.MiniPlayerController>
-          <div>{`<<`}</div>
+          <div onClick={handleGoPrevButtonClick}>{`<<`}</div>
           <div onClick={handlePlayButtonClick}>{isPlaying ? `||` : '▶︎'}</div>
           <div onClick={handleSkipButtonClick}>{`>>`}</div>
         </S.MiniPlayerController>
