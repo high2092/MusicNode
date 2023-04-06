@@ -1,6 +1,6 @@
 import { DragTransferData } from '../domain/DragTransferData';
 import { DragTransferTypes } from '../utils/ReactFlow';
-import * as S from './styles/Music';
+import * as S from './styles/common';
 
 interface MusicProps {
   id: number;

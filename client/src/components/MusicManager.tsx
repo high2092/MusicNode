@@ -171,15 +171,17 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
       </div>
 
       <S.SearchBox>
-        <div>음악 추가</div>
-        <form onSubmit={handleSubmit(handleMusicSubmit)}>
-          <S.MusicNameInput ref={musicNameInputRef} placeholder="이름" onKeyDown={handleMusicNameInputKeyDown} onChange={handleMusicNameInputChange} byUser={musicName !== latestAutoSetMusicName} />
-          <button type="button" onClick={handleSearchButtonClick} ref={searchButtonRef}>
-            검색
-          </button>
-          <input {...register('videoId')} placeholder="비디오 ID" />
-          <button>음악 추가하기</button>
-        </form>
+        <S.SearchInputSection>
+          <div>음악 추가</div>
+          <form onSubmit={handleSubmit(handleMusicSubmit)}>
+            <S.MusicNameInput ref={musicNameInputRef} placeholder="이름" onKeyDown={handleMusicNameInputKeyDown} onChange={handleMusicNameInputChange} byUser={musicName !== latestAutoSetMusicName} />
+            <button type="button" onClick={handleSearchButtonClick} ref={searchButtonRef}>
+              검색
+            </button>
+            <input {...register('videoId')} placeholder="비디오 ID" />
+            <button>음악 추가하기</button>
+          </form>
+        </S.SearchInputSection>
         <div>검색 결과</div>
         <SearchResultList
           musicName={musicName}

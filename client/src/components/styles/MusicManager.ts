@@ -18,7 +18,17 @@ export const MusicList = styled.ul`
   overflow: scroll;
 `;
 
-export const SearchBox = styled.div``;
+export const SearchBox = styled.div`
+  min-width: 10vw;
+  overflow-x: visible;
+  overflow-y: hidden;
+`;
+
+export const SearchInputSection = styled.div`
+  input {
+    width: 5rem;
+  }
+`;
 
 export const MiniPlayer = styled.div`
   display: flex;

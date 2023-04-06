@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import * as S from './styles/Music';
+import { SelectableDiv } from './styles/common';
 import { DragTransferTypes } from '../utils/ReactFlow';
 import { DragTransferData } from '../domain/DragTransferData';
+import * as S from './styles/SearchResultList';
 
 type DragTransferType = typeof DragTransferTypes[keyof typeof DragTransferTypes];
 
@@ -44,9 +45,10 @@ export const SearchResultList = ({ musicName: name, latestAutoSetMusicName, setL
   };
 
   return (
-    <div>
+    // <S.SearchResultListContainer>
+    <S.SearchResultList>
       {searchResultList.map(({ videoId, title }) => (
-        <S.SelectableDiv
+        <SelectableDiv
           key={videoId}
           onClick={handleSearchResultClick(videoId, title)}
           count={calculateHighlightStrength(videoId, title)}
@@ -54,8 +56,9 @@ export const SearchResultList = ({ musicName: name, latestAutoSetMusicName, setL
           draggable
         >
           {title}
-        </S.SelectableDiv>
+        </SelectableDiv>
       ))}
-    </div>
+    </S.SearchResultList>
+    // </S.SearchResultListContainer>
   );
 };
