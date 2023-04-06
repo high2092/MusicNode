@@ -2,6 +2,7 @@ package mojac.musicnode.controller;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -46,6 +47,16 @@ public class MusicNodeController {
 
         Long id = musicNodeService.saveMusicNode(node);
         return new CreateNodeResponse(id);
+    }
+
+    @PostMapping("/node/simple")
+    public CreateNodeSimpleResponse createNodeSimple(@RequestBody CreateNodeSimpleRequest request) {
+        Music music = new Music(request.getMusicName(), request.getVideoId());
+        Long musicId = musicService.saveMusic(music);
+
+        MusicNode node = new MusicNode(music);
+        Long nodeId = musicNodeService.saveMusicNode(node);
+        return new CreateNodeSimpleResponse(musicId, nodeId);
     }
 
     @PostMapping("/node/{id}/disconnect")
@@ -109,10 +120,29 @@ public class MusicNodeController {
     }
 
     @Getter
+    static class CreateNodeSimpleRequest {
+
+        @NotEmpty
+        private String videoId;
+        @NotEmpty
+        private String musicName;
+    }
+
+    @Getter
     @AllArgsConstructor
     static class CreateNodeResponse {
         private Long id;
     }
+
+    @Getter
+    @AllArgsConstructor
+    static class CreateNodeSimpleResponse {
+
+        private Long musicId;
+        private Long nodeId;
+    }
+
+
 
 
     @Getter
