@@ -9,8 +9,9 @@ import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
-import { currentMusicNodeInfoAtom, isPlayingAtom, musicNodeListAtom } from '../store';
+import { currentMusicNodeInfoAtom, isPlayingAtom, musicListAtom, musicNodeListAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
+import { Position } from '../domain/Position';
 
 class SelectedObject {
   id: string;
@@ -20,6 +21,7 @@ class SelectedObject {
 type ReactFlowObjectType = typeof ReactFlowObjectTypes[keyof typeof ReactFlowObjectTypes];
 
 export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }) => {
+  const [musicList] = useRecoilState(musicListAtom);
   const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
   const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
@@ -128,6 +130,26 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     }
   };
 
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    const { musicId, musicName, type, videoId } = JSON.parse(e.dataTransfer.getData('application/reactflow'));
+
+    const response = await httpPost('node', { musicId });
+
+    if (response.ok) {
+      const { id } = await response.json();
+
+      const music = musicList.find((music) => music.id === musicId);
+      setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
+      setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
+    }
+  };
+
   return (
     <S.NodeList>
       <ReactFlow
@@ -143,6 +165,8 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         // onNodesDelete={handleNodesDelete} // NodeDragStop 이벤트 및 nodes 상태 관리 관련 문제로 동작 X
         onEdgesDelete={handleEdgesDelete}
         onKeyDown={handleReactFlowKeyDown}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
       />
     </S.NodeList>
   );

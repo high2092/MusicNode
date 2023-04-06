@@ -8,7 +8,7 @@ import { MusicNode } from '../domain/MusicNode';
 import { convertMusicNodeToReactFlowObject } from '../utils/ReactFlow';
 import { useEdgesState, useNodesState } from 'reactflow';
 import { useRecoilState } from 'recoil';
-import { currentMusicNodeInfoAtom, isPlayingAtom, musicNodeListAtom } from '../store';
+import { currentMusicNodeInfoAtom, isPlayingAtom, musicListAtom, musicNodeListAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { YouTubePlayer } from 'react-youtube';
 
@@ -18,7 +18,7 @@ interface NodePageProps {
 }
 
 const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
-  const [musicList, setMusicList] = useState<IMusic[]>(initialMusicList);
+  const [musicList, setMusicList] = useRecoilState(musicListAtom);
   const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
 
   const musicNameRef = useRef<HTMLInputElement>();
@@ -30,6 +30,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   let youtubePlayerRef = useRef<YouTubePlayer>();
 
   useEffect(() => {
+    setMusicList(initialMusicList);
     setMusicNodeList(initialMusicNodeList);
   }, []);
 
