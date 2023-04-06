@@ -12,6 +12,7 @@ interface ReactFlowNodeConstructorProps {
   musicName: string;
   position?: Position;
   backgroundColor?: string;
+  videoId: string;
 }
 
 export class ReactFlowNode {
@@ -19,11 +20,15 @@ export class ReactFlowNode {
   data: { label: string };
   position: Position;
   style: { backgroundColor: string };
+  musicName: string;
+  videoId: string;
 
-  constructor({ id, musicName, position, backgroundColor }: ReactFlowNodeConstructorProps) {
+  constructor({ id, musicName, position, backgroundColor, videoId }: ReactFlowNodeConstructorProps) {
     this.id = id.toString();
     this.data = { label: musicName };
     this.position = position ?? new Position();
     this.style = { backgroundColor: backgroundColor ?? generateRandomHexColor() };
+    this.musicName = musicName;
+    this.videoId = videoId;
   }
 }

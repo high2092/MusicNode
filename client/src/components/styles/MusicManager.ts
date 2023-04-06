@@ -66,7 +66,7 @@ export const MiniPlayerController = styled.div`
 `;
 
 export const MiniPlayMusicTitle = styled.div`
-  font-size: 1.2rem;
+  font-size: 0.9rem;
 `;
 
 export const MusicNameInput = styled.input<{ byUser: boolean }>`

@@ -9,7 +9,8 @@ import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
-import { musicNodeListAtom } from '../store';
+import { currentMusicNodeInfoAtom, isPlayingAtom, musicNodeListAtom } from '../store';
+import { ReactFlowNode } from '../domain/ReactFlowNode';
 
 class SelectedObject {
   id: string;
@@ -20,6 +21,8 @@ type ReactFlowObjectType = typeof ReactFlowObjectTypes[keyof typeof ReactFlowObj
 
 export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }) => {
   const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
+  const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
+  const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
 
   const selectedObjectRef = useRef<SelectedObject>(new SelectedObject());
 
@@ -54,8 +57,12 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     [setEdges]
   );
 
-  const handleNodeDoubleClick = (e: React.MouseEvent, node: Node) => {
-    window.open(`/music-node/${node.id}`);
+  // const handleNodeDoubleClick = (e: React.MouseEvent, node: Node) => {
+  //   window.open(`/music-node/${node.id}`);
+  // };
+  const handleNodeDoubleClick = (e: React.MouseEvent, node: ReactFlowNode) => {
+    setCurrentMusicInfo(node);
+    setIsPlaying(true);
   };
 
   /**

@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { httpGet, httpPost } from '../utils/common';
+import { httpGet, httpPost, shortenMusicName } from '../utils/common';
 import { Music } from './Music';
 import * as S from './styles/MusicManager';
 import { FieldValues, useForm } from 'react-hook-form';
 import { SearchResultList } from './SearchResultList';
+import { useRecoilState } from 'recoil';
+import { currentMusicNodeInfoAtom, isPlayingAtom } from '../store';
+import YouTube from 'react-youtube';
 
 class SearchFilter {
   trim(value: string) {
@@ -16,7 +19,7 @@ class SearchFilter {
   }
 }
 
-export const MusicManager = ({ musicList, setMusicList, handleMusicClick }) => {
+export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtubePlayerRef }) => {
   const { register, handleSubmit, getValues, setValue } = useForm();
   const searchButtonRef = useRef<HTMLButtonElement>();
   const [searchResultList, setSearchResultList] = useState([]);
@@ -26,7 +29,17 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick }) => {
   const [selectedMusicId, setSelectedMusicId] = useState<number>();
   const searchFilter = new SearchFilter();
   const [query, setQuery] = useState<string>('');
+  const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
+  const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom);
+
   const filteredMusicList = searchFilter.filter(musicList, query);
+
+  useEffect(() => {
+    if (!youtubePlayerRef.current) return;
+
+    if (isPlaying) youtubePlayerRef.current.playVideo();
+    else youtubePlayerRef.current.pauseVideo();
+  }, [isPlaying]);
 
   const handleMusicSubmit = async (formData: FieldValues) => {
     const { videoId } = formData;
@@ -101,6 +114,38 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick }) => {
     setValue('videoId', videoId);
   };
 
+  const handleVideoEnd = () => {
+    jumpToNextNode();
+  };
+
+  const handlePlayButtonClick = () => {
+    if (!currentMusicInfo.id) return;
+    setIsPlaying((isPlaying) => !isPlaying);
+  };
+
+  const handleSkipButtonClick = () => {
+    if (!currentMusicInfo.id) return;
+    jumpToNextNode();
+  };
+
+  const jumpToNextNode = async () => {
+    const { id } = currentMusicInfo;
+    let response = await httpGet(`node/${id}/next`);
+
+    const { id: next } = await response.json();
+
+    if (!next) {
+      alert('마지막 노드입니다.');
+      return;
+    }
+
+    response = await httpGet(`node/${next}`);
+
+    const { musicId, musicName, videoId } = await response.json();
+
+    setCurrentMusicInfo({ id: next, musicName, videoId });
+  };
+
   return (
     <S.MusicManager>
       <div>
@@ -150,13 +195,26 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick }) => {
           <S.MiniPlayerDecorationImoticonText>٩(ˊᗜˋ*)و</S.MiniPlayerDecorationImoticonText>
         </S.MiniPlayerDecoration>
         <S.MiniPlayerMusicInfo>
-          <img src="https://img.youtube.com/vi/kqe-Na05TT0/mqdefault.jpg" />
-          <S.MiniPlayMusicTitle>동그리코</S.MiniPlayMusicTitle>
+          <YouTube
+            videoId={currentMusicInfo.videoId}
+            opts={{
+              width: 360,
+              height: 180,
+              playerVars: {
+                autoplay: 1,
+              },
+            }}
+            onEnd={handleVideoEnd}
+            onReady={({ target }) => {
+              youtubePlayerRef.current = target;
+            }}
+          />
+          <S.MiniPlayMusicTitle>{shortenMusicName(currentMusicInfo.musicName)}</S.MiniPlayMusicTitle>
         </S.MiniPlayerMusicInfo>
         <S.MiniPlayerController>
           <div>{`<<`}</div>
-          <div>{`||`}</div>
-          <div>{`>>`}</div>
+          <div onClick={handlePlayButtonClick}>{isPlaying ? `||` : '▶︎'}</div>
+          <div onClick={handleSkipButtonClick}>{`>>`}</div>
         </S.MiniPlayerController>
       </S.MiniPlayer>
     </S.MusicManager>

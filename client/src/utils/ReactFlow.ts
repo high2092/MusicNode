@@ -169,11 +169,12 @@ export const convertMusicNodeToReactFlowObject = (musicNodeList: IMusicNode[]) =
   const TEST_COLORS = Array.from({ length: groupNum + 1 }, () => generateRandomHexColor());
 
   const nodes = musicNodeList.map(
-    ({ id, musicName, position }) =>
+    ({ id, musicName, position, videoId }) =>
       new ReactFlowNode({
         id,
         musicName,
         position,
+        videoId,
         backgroundColor: `${mixColor(WHITE, lightenColor(TEST_COLORS[group[id]] ?? TEST_COLOR, 순서에_따른_연하게_할_수준_결정(rank[id], groups[group[id]].length) * SPECTRUM_FACTOR), DEFAULT_WHITE_PAINT_RATIO)}`,
       })
   );

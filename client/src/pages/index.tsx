@@ -8,8 +8,9 @@ import { MusicNode } from '../domain/MusicNode';
 import { convertMusicNodeToReactFlowObject } from '../utils/ReactFlow';
 import { useEdgesState, useNodesState } from 'reactflow';
 import { useRecoilState } from 'recoil';
-import { musicNodeListAtom } from '../store';
+import { currentMusicNodeInfoAtom, isPlayingAtom, musicNodeListAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
+import { YouTubePlayer } from 'react-youtube';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -25,6 +26,8 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const { nodes: initialNodes, edges: initialEdges } = convertMusicNodeToReactFlowObject(initialMusicNodeList);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  let youtubePlayerRef = useRef<YouTubePlayer>();
 
   useEffect(() => {
     setMusicNodeList(initialMusicNodeList);
@@ -48,7 +51,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
 
       const music = musicList.find((music) => music.id === musicId);
       setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
-      setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name })));
+      setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
     }
   };
 
@@ -65,7 +68,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
       </div>
       <hr />
       <div>
-        <MusicManager musicList={musicList} setMusicList={setMusicList} handleMusicClick={handleMusicClick} />
+        <MusicManager musicList={musicList} setMusicList={setMusicList} handleMusicClick={handleMusicClick} youtubePlayerRef={youtubePlayerRef} />
       </div>
     </div>
   );

@@ -39,3 +39,10 @@ export const httpDelete = async (path: string) => {
 
   return response;
 };
+
+export const shortenMusicName = (name: string) => {
+  const LIMIT_LEN = 33;
+
+  if (name.length <= LIMIT_LEN) return name;
+  else return `${name.substring(0, 30)}...`;
+};
