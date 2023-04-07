@@ -209,6 +209,8 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
                 autoplay: 1,
               },
             }}
+            onPause={() => setIsPlaying(false)}
+            onPlay={() => setIsPlaying(true)}
             onEnd={handleVideoEnd}
             onReady={({ target }) => {
               youtubePlayerRef.current = target;
