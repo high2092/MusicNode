@@ -59,6 +59,7 @@ const groupingV4 = (musicNodeList: IMusicNode[]) => {
   const stack = [];
   const groups = [];
   const roots = [];
+  const cycle = {};
 
   const prev = {};
   const rank = {};
@@ -79,7 +80,8 @@ const groupingV4 = (musicNodeList: IMusicNode[]) => {
 
     // 사이클에 해당
     if (visited[id]) {
-      isCycle = true;
+      cycle[id] = isCycle = true;
+      roots.push(id);
       return ++groupNum;
     }
 
@@ -100,7 +102,10 @@ const groupingV4 = (musicNodeList: IMusicNode[]) => {
     groups[result] ??= [];
     groups[result].push(id);
 
-    if (isCycle) rank[id] = 1;
+    if ((cycle[id] = isCycle)) {
+      rank[id] = 1;
+      roots.push(id);
+    }
 
     return (group[id] = result);
   };
@@ -113,6 +118,7 @@ const groupingV4 = (musicNodeList: IMusicNode[]) => {
     rank[id] = seq;
     if (!prev[id]) return;
     for (const p of prev[id]) {
+      if (cycle[p]) continue;
       dfs2(p, seq + 1);
     }
   };
