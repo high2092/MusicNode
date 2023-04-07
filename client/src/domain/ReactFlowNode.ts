@@ -1,11 +1,6 @@
+import { generateRandomHexColor } from '../utils/ReactFlow';
 import { MusicNode } from './MusicNode';
 import { Position } from './Position';
-
-const generateRandomHexColor = () => {
-  return `#${Math.floor(Math.random() * Math.pow(2, 24))
-    .toString(16)
-    .padStart(6, '0')}`;
-};
 
 interface ReactFlowNodeConstructorProps {
   id: number;

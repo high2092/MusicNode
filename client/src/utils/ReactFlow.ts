@@ -124,10 +124,12 @@ const groupingV4 = (musicNodeList: IMusicNode[]) => {
   return { group, groupNum, groups, rank };
 };
 
-const generateRandomHexColor = () => {
-  return `#${Math.floor(Math.random() * Math.pow(2, 24))
-    .toString(16)
-    .padStart(6, '0')}`;
+export const generateRandomHexColor = () => {
+  const R = Math.floor(Math.random() * 127 + 128).toString(16);
+  const G = Math.floor(Math.random() * 127 + 128).toString(16);
+  const B = Math.floor(Math.random() * 127 + 128).toString(16);
+
+  return `#${[R, G, B].join('')}`;
 };
 
 /**
@@ -164,7 +166,7 @@ const 순서에_따른_연하게_할_수준_결정 = (rank, total) => {
 };
 
 export const convertMusicNodeToReactFlowObject = (musicNodeList: IMusicNode[]) => {
-  const DEFAULT_WHITE_PAINT_RATIO = 0.5; // 전체적으로 얼마나 옅은 색을 띌 지
+  const DEFAULT_WHITE_PAINT_RATIO = 0.4; // 전체적으로 얼마나 옅은 색을 띌 지
   const WHITE = '#ffffff';
   const TEST_COLOR = '#000000';
   const SPECTRUM_FACTOR = 0.9; // 얼마나 다양한 색으로 분포될지
