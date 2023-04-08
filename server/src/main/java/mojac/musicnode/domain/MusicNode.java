@@ -15,9 +15,11 @@ public class MusicNode {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member; // 흠..
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "music_id")
     private Music music;
 
     @OneToOne

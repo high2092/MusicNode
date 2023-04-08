@@ -17,6 +17,7 @@ public class MusicList {
     private String name;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToMany(mappedBy = "musicList")

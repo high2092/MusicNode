@@ -35,13 +35,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         Member member = memberRepository.findOneByOAuthId(oAuthId);
 
-        String jwt = securityUtil.createJwt(member.getId().toString(), null, null);
-        Cookie cookie = new Cookie("MN_TOKEN", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(3600); // 쿠키 유효 시간 설정 (초 단위)
-        cookie.setPath("/");
+        Cookie cookie = securityUtil.generateAccessToken(member.getId());
 
         response.addCookie(cookie);
         response.setStatus(HttpStatus.OK.value());
     }
+
 }

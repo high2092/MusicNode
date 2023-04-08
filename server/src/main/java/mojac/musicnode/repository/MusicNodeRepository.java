@@ -3,6 +3,7 @@ package mojac.musicnode.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import lombok.RequiredArgsConstructor;
+import mojac.musicnode.domain.Member;
 import mojac.musicnode.domain.MusicNode;
 import org.springframework.stereotype.Repository;
 

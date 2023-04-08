@@ -30,4 +30,25 @@ public class MemberRepository {
         }
     }
 
+    public Member findOneByUid(String uid) {
+        try {
+            return em.createQuery("select m from Member m where m.uid = :uid", Member.class)
+                    .setParameter("uid", uid)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public Member findOneByUidAndCipher(String uid, String cipher) {
+        try {
+            return em.createQuery("select m from Member m where m.uid = :uid and m.password = :password", Member.class)
+                    .setParameter("uid", uid)
+                    .setParameter("password", cipher)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
 }

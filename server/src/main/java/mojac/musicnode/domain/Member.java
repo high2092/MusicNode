@@ -1,6 +1,7 @@
 package mojac.musicnode.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import mojac.musicnode.domain.thumb.Thumbs;
 
@@ -13,10 +14,16 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
+    @Column
+    @NotEmpty
+    private String uid;
+
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    private String password;
+
+    @Column
     private Long oauth_id;
 
     @OneToMany(mappedBy = "member")
@@ -24,9 +31,10 @@ public class Member {
 
     protected Member() {}
 
-    public Member(String name, Long oauth_id) {
-        this.id = id;
+    public Member(String uid, String name, String cipher, Long oauth_id) {
+        this.uid = uid;
         this.name = name;
+        this.password = cipher;
         this.oauth_id = oauth_id;
     }
 
