@@ -2,6 +2,7 @@ package mojac.musicnode.repository;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import mojac.musicnode.domain.Member;
 import mojac.musicnode.domain.Music;
 import org.springframework.stereotype.Repository;
 
@@ -24,8 +25,9 @@ public class MusicRepository {
         return em.find(Music.class, id);
     }
 
-    public List<Music> findAll() {
-        return em.createQuery("select m from Music m", Music.class)
+    public List<Music> findAll(Member member) {
+        return em.createQuery("select m from Music m where m.member = :member", Music.class)
+                .setParameter("member", member)
                 .getResultList();
     }
 }

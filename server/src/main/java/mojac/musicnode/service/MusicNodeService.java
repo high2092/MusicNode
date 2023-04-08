@@ -1,6 +1,7 @@
 package mojac.musicnode.service;
 
 import lombok.RequiredArgsConstructor;
+import mojac.musicnode.domain.Member;
 import mojac.musicnode.domain.MusicNode;
 import mojac.musicnode.domain.Position;
 import mojac.musicnode.repository.MusicNodeRepository;
@@ -40,8 +41,8 @@ public class MusicNodeService {
         return musicNodeRepository.findOne(id);
     }
 
-    public List<MusicNode> findAll() {
-        return musicNodeRepository.findAll();
+    public List<MusicNode> findAll(Member member) {
+        return musicNodeRepository.findAll(member);
     }
 
     @Transactional

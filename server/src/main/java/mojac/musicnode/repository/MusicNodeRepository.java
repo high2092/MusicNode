@@ -30,8 +30,9 @@ public class MusicNodeRepository {
         return em.find(MusicNode.class, id);
     }
 
-    public List<MusicNode> findAll() {
-        return em.createQuery("select m from MusicNode m", MusicNode.class)
+    public List<MusicNode> findAll(Member member) {
+        return em.createQuery("select m from MusicNode m where m.member = :member", MusicNode.class)
+                .setParameter("member", member)
                 .getResultList();
     }
 

@@ -31,6 +31,7 @@ public class MusicNode {
     protected MusicNode() {}
     public MusicNode(Music music) {
         this.music = music;
+        this.member = music.getMember();
     }
 
     public MusicNode(Music music, String color) {

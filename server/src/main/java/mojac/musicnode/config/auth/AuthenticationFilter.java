@@ -34,6 +34,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         Cookie[] cookies = request.getCookies();
+
         String jwt = null;
         if (cookies != null) {
             for (Cookie cookie : cookies) {

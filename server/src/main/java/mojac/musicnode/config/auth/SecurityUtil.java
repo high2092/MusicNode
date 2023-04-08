@@ -1,9 +1,9 @@
 package mojac.musicnode.config.auth;
 
 import io.jsonwebtoken.*;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -40,12 +40,11 @@ public class SecurityUtil {
                 .getBody();
     }
 
-    public Cookie generateAccessToken(Long memberId) {
+    public ResponseCookie generateAccessTokenCookie(Long memberId) {
         String jwt = createJwt(memberId.toString(), null, null);
-        Cookie cookie = new Cookie("MN_TOKEN", jwt);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(3600); // 쿠키 유효 시간 설정 (초 단위)
-        cookie.setPath("/");
-        return cookie;
+        return ResponseCookie.from("MN_TOKEN", jwt)
+                .httpOnly(true)
+                .path("/")
+                .build();
     }
 }

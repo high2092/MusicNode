@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mojac.musicnode.domain.Member;
 import mojac.musicnode.repository.MemberRepository;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -35,9 +37,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         Member member = memberRepository.findOneByOAuthId(oAuthId);
 
-        Cookie cookie = securityUtil.generateAccessToken(member.getId());
+        ResponseCookie cookie = securityUtil.generateAccessTokenCookie(member.getId());
 
-        response.addCookie(cookie);
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         response.setStatus(HttpStatus.OK.value());
     }
 

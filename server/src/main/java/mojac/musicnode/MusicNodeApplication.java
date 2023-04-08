@@ -21,8 +21,11 @@ public class MusicNodeApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins(CLIENT_URL)
-						.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE");
+				registry.addMapping("/**")
+						.allowedOrigins(CLIENT_URL)
+						.allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+						.allowedHeaders("*")
+						.allowCredentials(true);
 			}
 		};
 	}

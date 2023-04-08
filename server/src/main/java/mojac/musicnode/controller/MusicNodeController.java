@@ -8,12 +8,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mojac.musicnode.domain.Member;
 import mojac.musicnode.domain.Music;
 import mojac.musicnode.domain.MusicNode;
 import mojac.musicnode.domain.Position;
 import mojac.musicnode.exception.NextNodeNotExistsException;
+import mojac.musicnode.service.MemberService;
 import mojac.musicnode.service.MusicNodeService;
 import mojac.musicnode.service.MusicService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Stream;
@@ -21,25 +24,30 @@ import java.util.stream.Stream;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/node")
 public class MusicNodeController {
 
     private final MusicNodeService musicNodeService;
     private final MusicService musicService;
+    private final MemberService memberService;
 
-    @GetMapping("/node")
-    public Result getNodeList() {
-        Stream<MusicNodeDto> musicNodeList = musicNodeService.findAll().stream().map(m -> new MusicNodeDto(m));
+    @GetMapping
+    public Result getNodeList(Authentication authentication) {
+        Member member = memberService.findOne((Long) authentication.getPrincipal());
+
+        log.info("member = {}", member);
+        Stream<MusicNodeDto> musicNodeList = musicNodeService.findAll(member).stream().map(m -> new MusicNodeDto(m));
 
         return new Result(musicNodeList);
     }
 
-    @GetMapping("/node/{id}")
+    @GetMapping("/{id}")
     public MusicNodeDto getNode(@PathVariable Long id) {
         MusicNode node = musicNodeService.findOne(id);
         return new MusicNodeDto(node);
     }
 
-    @PostMapping("/node")
+    @PostMapping
     public CreateNodeResponse createNode(@RequestBody @Valid CreateNodeRequest request) {
         Music music = musicService.findMusic(request.getMusicId());
         MusicNode node = new MusicNode(music);
@@ -49,9 +57,13 @@ public class MusicNodeController {
         return new CreateNodeResponse(id);
     }
 
-    @PostMapping("/node/simple")
-    public CreateNodeSimpleResponse createNodeSimple(@RequestBody CreateNodeSimpleRequest request) {
-        Music music = new Music(request.getMusicName(), request.getVideoId());
+    @PostMapping("/simple")
+    public CreateNodeSimpleResponse createNodeSimple(Authentication authentication, @RequestBody CreateNodeSimpleRequest request) {
+
+        Long memberId = (Long) authentication.getPrincipal();
+        Member member = memberService.findOne(memberId);
+
+        Music music = new Music(request.getMusicName(), request.getVideoId(), member);
         Long musicId = musicService.saveMusic(music);
 
         MusicNode node = new MusicNode(music);
@@ -59,7 +71,7 @@ public class MusicNodeController {
         return new CreateNodeSimpleResponse(musicId, nodeId);
     }
 
-    @PostMapping("/node/{id}/disconnect")
+    @PostMapping("/{id}/disconnect")
     public DisconnectNodeResponse disconnectNode(@PathVariable Long id) {
         MusicNode source = musicNodeService.findOne(id);
         Long targetId = source.getNext().getId();
@@ -69,7 +81,7 @@ public class MusicNodeController {
         return new DisconnectNodeResponse(id, targetId);
     }
 
-    @PatchMapping("/node/{id}")
+    @PatchMapping("/{id}")
     @JsonInclude
     public PatchNodeResponse patchNode(@PathVariable Long id, @RequestBody PatchNodeRequest request) {
         MusicNode node = musicNodeService.findOne(id);
@@ -87,7 +99,7 @@ public class MusicNodeController {
         return new PatchNodeResponse(id, nextId, color, position);
     }
 
-    @DeleteMapping("/node/{id}")
+    @DeleteMapping("/{id}")
     public DeleteNodeResponse deleteNode(@PathVariable Long id) {
         MusicNode node = musicNodeService.findOne(id);
         musicNodeService.deleteMusicNode(node);
@@ -95,7 +107,7 @@ public class MusicNodeController {
         return new DeleteNodeResponse(id);
     }
 
-    @GetMapping("/node/{id}/next")
+    @GetMapping("/{id}/next")
     public GetNextNodeResponse getNextNode(@PathVariable Long id) {
         MusicNode node = musicNodeService.findOne(id);
 

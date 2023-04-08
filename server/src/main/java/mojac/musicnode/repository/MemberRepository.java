@@ -20,6 +20,10 @@ public class MemberRepository {
         }
     }
 
+    public Member findOne(Long id) {
+        return em.find(Member.class, id);
+    }
+
     public Member findOneByOAuthId(Long oauthId) {
         try {
             return em.createQuery("select m from Member m where m.oauth_id = :oauth_id", Member.class)

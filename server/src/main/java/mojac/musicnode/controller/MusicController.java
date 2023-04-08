@@ -5,27 +5,36 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import mojac.musicnode.domain.Member;
 import mojac.musicnode.domain.Music;
+import mojac.musicnode.service.MemberService;
 import mojac.musicnode.service.MusicService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/music")
 public class MusicController {
 
     private final MusicService musicService;
+    private final MemberService memberService;
 
-    @GetMapping("/musics")
-    public Result musics() {
-        return new Result(musicService.findMusics());
+    @GetMapping
+    public Result musics(Authentication authentication) {
+        Long memberId = (Long) authentication.getPrincipal();
+        Member member = memberService.findOne(memberId);
+
+        return new Result(musicService.findMusics(member));
     }
 
-    @PostMapping("/music")
-    public CreateMusicResponse createMusic(@RequestBody @Valid CreateMusicRequest request) {
-        Music music = new Music(request.getName(), request.getVideoId());
+    @PostMapping
+    public CreateMusicResponse createMusic(Authentication authentication, @RequestBody @Valid CreateMusicRequest request) {
+
+        Long memberId = (Long) authentication.getPrincipal();
+        Member member = memberService.findOne(memberId);
+
+        Music music = new Music(request.getName(), request.getVideoId(), member);
         Long id = musicService.saveMusic(music);
         return new CreateMusicResponse(id);
     }

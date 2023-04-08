@@ -25,9 +25,10 @@ public class Music {
 
     protected Music() {}
 
-    public Music(String name, String videoId) {
+    public Music(String name, String videoId, Member member) {
         this.name = name;
         this.videoId = videoId;
+        this.member = member;
     }
 
     public void addCategory(Category category) {

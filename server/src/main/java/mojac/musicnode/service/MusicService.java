@@ -1,6 +1,7 @@
 package mojac.musicnode.service;
 
 import lombok.RequiredArgsConstructor;
+import mojac.musicnode.domain.Member;
 import mojac.musicnode.domain.Music;
 import mojac.musicnode.repository.MusicRepository;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class MusicService {
         return musicRepository.findOne(id);
     }
 
-    public List<Music> findMusics() {
-        return musicRepository.findAll();
+    public List<Music> findMusics(Member member) {
+        return musicRepository.findAll(member);
     }
 }

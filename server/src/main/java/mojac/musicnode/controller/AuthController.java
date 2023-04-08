@@ -1,6 +1,5 @@
 package mojac.musicnode.controller;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -9,11 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mojac.musicnode.config.auth.SecurityUtil;
 import mojac.musicnode.service.MemberService;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -47,13 +43,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public MemberLoginResponse login(@RequestBody MemberLoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<MemberLoginResponse> login(@RequestBody MemberLoginRequest request, HttpServletResponse response) {
         Long memberId = memberService.login(request.getUid(), request.getPassword());
 
-        Cookie cookie = securityUtil.generateAccessToken(memberId);
-        response.addCookie(cookie);
+        ResponseCookie responseCookie = securityUtil.generateAccessTokenCookie(memberId);
 
-        return new MemberLoginResponse(memberId);
+        log.info("cookie = {}", responseCookie.toString());
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new MemberLoginResponse(memberId));
     }
 
     @Getter

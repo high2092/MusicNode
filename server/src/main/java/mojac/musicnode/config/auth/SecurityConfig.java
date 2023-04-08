@@ -47,8 +47,7 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeHttpRequests()
-                .requestMatchers("/user/**", "/music", "/music-node").hasAnyRole("USER")
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/node/**", "/music/**", "/user/**").hasAnyRole("USER")
                 .anyRequest().permitAll();
 
         http.exceptionHandling()
