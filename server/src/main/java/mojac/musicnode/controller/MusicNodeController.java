@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mojac.musicnode.domain.Member;
-import mojac.musicnode.domain.Music;
-import mojac.musicnode.domain.MusicNode;
-import mojac.musicnode.domain.Position;
+import mojac.musicnode.domain.*;
 import mojac.musicnode.exception.NextNodeNotExistsException;
 import mojac.musicnode.service.MemberService;
 import mojac.musicnode.service.MusicNodeService;
@@ -51,7 +48,7 @@ public class MusicNodeController {
     public CreateNodeResponse createNode(@RequestBody @Valid CreateNodeRequest request) {
         Music music = musicService.findMusic(request.getMusicId());
         MusicNode node = new MusicNode(music);
-        log.info("NODE = {}", node.getMusic().getName());
+        log.info("NODE = {}", node.getMusicInfo().getName());
 
         Long id = musicNodeService.saveMusicNode(node);
         return new CreateNodeResponse(id);
@@ -204,12 +201,11 @@ public class MusicNodeController {
 
         public MusicNodeDto(MusicNode musicNode) {
 
-            Music music = musicNode.getMusic();
+            MusicInfo musicInfo = musicNode.getMusicInfo();
 
             this.id = musicNode.getId();
-            this.musicId = music.getId();
-            this.musicName = music.getName();
-            this.videoId = music.getVideoId();
+            this.musicName = musicInfo.getName();
+            this.videoId = musicInfo.getVideoId();
             if (musicNode.getNext() != null) this.next = musicNode.getNext().getId();
             this.position = musicNode.getPosition();
         }

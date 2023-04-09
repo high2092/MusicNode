@@ -16,11 +16,9 @@ public class MusicNode {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member; // 흠..
+    private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "music_id")
-    private Music music;
+    private MusicInfo musicInfo;
 
     @OneToOne
     private MusicNode next;
@@ -29,13 +27,14 @@ public class MusicNode {
     private Position position = new Position();
 
     protected MusicNode() {}
+
     public MusicNode(Music music) {
-        this.music = music;
+        this.musicInfo = music.getMusicInfo();
         this.member = music.getMember();
     }
 
     public MusicNode(Music music, String color) {
-        this.music = music;
+        this.musicInfo = music.getMusicInfo();
         this.color = color;
     }
 

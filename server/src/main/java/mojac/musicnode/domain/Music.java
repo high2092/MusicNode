@@ -13,8 +13,7 @@ public class Music {
     @Column(name = "music_id")
     private Long id;
 
-    private String name;
-    private String videoId;
+    private MusicInfo musicInfo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -26,8 +25,7 @@ public class Music {
     protected Music() {}
 
     public Music(String name, String videoId, Member member) {
-        this.name = name;
-        this.videoId = videoId;
+        this.musicInfo = new MusicInfo(name, videoId);
         this.member = member;
     }
 

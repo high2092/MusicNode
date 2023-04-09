@@ -25,7 +25,7 @@ public class MusicController {
         Long memberId = (Long) authentication.getPrincipal();
         Member member = memberService.findOne(memberId);
 
-        return new Result(musicService.findMusics(member));
+        return new Result(musicService.findMusics(member).stream().map(m -> new MusicDto(m)));
     }
 
     @PostMapping
@@ -43,6 +43,20 @@ public class MusicController {
     @AllArgsConstructor
     static class Result<T> {
         T data;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    static class MusicDto {
+        private Long id;
+        private String name;
+        private String videoId;
+
+        public MusicDto(Music music) {
+            this.id = music.getId();
+            this.name = music.getMusicInfo().getName();
+            this.videoId = music.getMusicInfo().getVideoId();
+        }
     }
 
     @Getter
