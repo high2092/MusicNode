@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { httpGet, httpPost } from '../utils/common';
+import { axiosHttpGet, httpPost } from '../utils/common';
 import { FieldValues, useForm } from 'react-hook-form';
 import { NodeList } from '../components/NodeList';
 import { MusicManager } from '../components/MusicManager';
@@ -11,6 +11,8 @@ import { useRecoilState } from 'recoil';
 import { currentMusicNodeInfoAtom, isPlayingAtom, musicListAtom, musicNodeListAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { YouTubePlayer } from 'react-youtube';
+import type { GetServerSidePropsContext } from 'next';
+import type { AxiosResponse } from 'axios';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -75,14 +77,23 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   );
 };
 
-export const getServerSideProps = async () => {
-  let response: Response;
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  let response: AxiosResponse;
 
-  response = await httpGet('musics');
-  const { data: initialMusicList } = response.ok ? await response.json() : { data: [] };
+  const { req } = context;
 
-  response = await httpGet('node');
-  const { data: initialMusicNodeList } = response.ok ? await response.json() : { data: [] };
+  let initialMusicList: IMusic[] = [];
+  let initialMusicNodeList: IMusicNode[] = [];
+
+  try {
+    response = await axiosHttpGet('music', req.headers.cookie);
+    initialMusicList = response.data.data;
+
+    response = await axiosHttpGet('node', req.headers.cookie);
+    initialMusicNodeList = response.data.data;
+  } catch (e) {
+    console.log(e);
+  }
 
   return {
     props: {
