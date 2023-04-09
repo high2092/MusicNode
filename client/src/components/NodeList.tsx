@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
-import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, playlistAtom } from '../store';
+import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, selectedPlaylistAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { Position } from '../domain/Position';
 import { Music } from '../domain/Music';
@@ -28,7 +28,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
   const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
   const [clickEventPosition, setClickEventPosition] = useRecoilState(clickEventPositionAtom);
-  const [playlist, setPlaylist] = useRecoilState(playlistAtom);
+  const [playlist, setPlaylist] = useRecoilState(selectedPlaylistAtom);
 
   const selectedObjectRef = useRef<SelectedObject>(new SelectedObject());
 

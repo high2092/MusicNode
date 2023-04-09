@@ -1,5 +1,5 @@
 import { atom, selector } from 'recoil';
-import { MusicInfo, Playlist } from './domain/MusicInfo';
+import { MusicInfo } from './domain/MusicInfo';
 
 export const musicMapAtom = atom<Map<number, IMusic>>({
   key: 'musicMapAtom',
@@ -36,7 +36,12 @@ export const clickEventPositionAtom = atom<{ x: number; y: number }>({
   default: { x: 0, y: 0 },
 });
 
-export const playlistAtom = atom<Playlist>({
-  key: 'playlistAtom',
-  default: new Map<number, MusicInfo>(),
+export const selectedPlaylistAtom = atom<IPlaylist>({
+  key: 'selectedPlaylistAtom',
+  default: { id: undefined, name: undefined, contents: undefined },
+});
+
+export const playlistMapAtom = atom<Map<number, IPlaylist>>({
+  key: '',
+  default: new Map<number, IPlaylist>(),
 });

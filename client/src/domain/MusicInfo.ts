@@ -9,5 +9,3 @@ export class MusicInfo {
     this.cycle = cycle;
   }
 }
-
-export type Playlist = Map<number, MusicInfo>;

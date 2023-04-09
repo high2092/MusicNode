@@ -1,18 +1,18 @@
 import { useRecoilValue } from 'recoil';
 import * as S from './styles/PlaylistModal';
-import { clickEventPositionAtom, playlistAtom } from '../store';
+import { clickEventPositionAtom, selectedPlaylistAtom } from '../store';
 import { httpPost } from '../utils/common';
 import { FieldValues, useForm } from 'react-hook-form';
 
 export const PlaylistModal = () => {
   const { x, y } = useRecoilValue(clickEventPositionAtom);
 
-  const playlist = useRecoilValue(playlistAtom);
+  const playlist = useRecoilValue(selectedPlaylistAtom);
 
   const { register, handleSubmit } = useForm();
 
   const handlePlaylistCreate = async (formData: FieldValues) => {
-    const contents = JSON.stringify(Object.fromEntries(playlist));
+    const contents = JSON.stringify(Object.fromEntries(playlist.contents));
     const response = await httpPost('playlist', {
       name: formData.name,
       contents,
@@ -26,7 +26,7 @@ export const PlaylistModal = () => {
   return (
     <S.PlaylistModal x={x} y={y} onClick={(e) => e.stopPropagation()}>
       <S.Playlist>
-        {Array.from(playlist.values()).map(({ name, cycle }, idx) => (
+        {Array.from(playlist.contents.values()).map(({ name, cycle }, idx) => (
           <S.MusicInfo key={`playlist-${idx}`}>{`${name}${cycle ? ' <' : ''}`}</S.MusicInfo>
         ))}
       </S.Playlist>

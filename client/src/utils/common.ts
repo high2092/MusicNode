@@ -1,7 +1,7 @@
 import { FieldValues } from 'react-hook-form';
 import { API_HOST } from '../constants';
 import axios from 'axios';
-import { MusicInfo, Playlist } from '../domain/MusicInfo';
+import { MusicInfo } from '../domain/MusicInfo';
 
 export const axiosHttpGet = async (path: string, cookie: string) => {
   const response = await axios.get(`${API_HOST}/${path}`, {
@@ -76,10 +76,10 @@ export const validateVideoId = async (videoId) => {
   return response.ok;
 };
 
-export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMusicNode>) => Playlist = (head, musicNodeMap) => {
+export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMusicNode>) => IPlaylist = (head, musicNodeMap) => {
   let curr = head;
 
-  let contents: Playlist = new Map<number, MusicInfo>();
+  const contents = new Map<number, MusicInfo>();
 
   while (curr) {
     const node = musicNodeMap.get(curr);
@@ -95,5 +95,5 @@ export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMus
     curr = node.next;
   }
 
-  return contents;
+  return { contents };
 };
