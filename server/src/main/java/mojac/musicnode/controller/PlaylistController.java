@@ -1,5 +1,7 @@
 package mojac.musicnode.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,7 @@ public class PlaylistController {
     }
 
     @PostMapping
-    public CreatePlaylistResponse createPlaylist(Authentication authentication, @RequestBody CreatePlaylistRequest request) {
+    public CreatePlaylistResponse createPlaylist(Authentication authentication, @RequestBody @Valid CreatePlaylistRequest request) {
         Long memberId = (Long) authentication.getPrincipal();
         Member member = memberService.findOne(memberId);
         Playlist playlist = new Playlist(request.getName(), request.getContents(), member);
@@ -40,6 +42,7 @@ public class PlaylistController {
 
     @Getter
     static class CreatePlaylistRequest {
+        @NotEmpty
         String name;
         String contents;
     }

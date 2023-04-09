@@ -13,6 +13,7 @@ public class Playlist {
     @Column(name = "music_list_id")
     private Long id;
 
+    @Column(length = 10000)
     private String contents; // JSON String
 
     private String name;
