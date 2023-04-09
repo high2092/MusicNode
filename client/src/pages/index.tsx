@@ -8,12 +8,13 @@ import { MusicNode } from '../domain/MusicNode';
 import { convertMusicNodeToReactFlowObject } from '../utils/ReactFlow';
 import { useEdgesState, useNodesState } from 'reactflow';
 import { useRecoilState } from 'recoil';
-import { currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicListAtom, musicNodeListAtom } from '../store';
+import { currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { YouTubePlayer } from 'react-youtube';
 import type { GetServerSidePropsContext } from 'next';
 import type { AxiosResponse } from 'axios';
 import { PlaylistModal } from '../components/PlaylistModal';
+import { MusicInfo } from '../domain/MusicInfo';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -21,21 +22,24 @@ interface NodePageProps {
 }
 
 const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
-  const [musicList, setMusicList] = useRecoilState(musicListAtom);
-  const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
+  const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
+  const [musicNodeMap, setMusicNodeMap] = useRecoilState(musicNodeMapAtom);
   const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
+
+  const initialMusicMap = new Map(initialMusicList.map((music) => [music.id, music]));
+  const initialMusicNodeMap = new Map(initialMusicNodeList.map((node) => [node.id, node]));
 
   const musicNameRef = useRef<HTMLInputElement>();
 
-  const { nodes: initialNodes, edges: initialEdges } = convertMusicNodeToReactFlowObject(initialMusicNodeList);
+  const { nodes: initialNodes, edges: initialEdges } = convertMusicNodeToReactFlowObject(initialMusicNodeMap);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   let youtubePlayerRef = useRef<YouTubePlayer>();
 
   useEffect(() => {
-    setMusicList(initialMusicList);
-    setMusicNodeList(initialMusicNodeList);
+    setMusicMap(initialMusicMap);
+    setMusicNodeMap(initialMusicNodeMap);
   }, []);
 
   useEffect(() => {
@@ -54,7 +58,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
 
   const handleMusicClick = (id: number) => () => {
     setValue('musicId', id);
-    musicNameRef.current.value = musicList.find((music) => music.id === id).name;
+    musicNameRef.current.value = musicMap.get(id).name;
     console.log(id);
   };
 
@@ -66,8 +70,8 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
     if (response.ok) {
       const { id } = await response.json();
 
-      const music = musicList.find((music) => music.id === musicId);
-      setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
+      const music = musicMap.get(musicId);
+      setMusicNodeMap(musicNodeMap.set(id, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId })));
       setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
     }
   };
@@ -85,7 +89,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
       </div>
       <hr />
       <div>
-        <MusicManager musicList={musicList} setMusicList={setMusicList} handleMusicClick={handleMusicClick} youtubePlayerRef={youtubePlayerRef} />
+        <MusicManager handleMusicClick={handleMusicClick} youtubePlayerRef={youtubePlayerRef} />
       </div>
       {isVisiblePlaylistModal && <PlaylistModal />}
     </div>

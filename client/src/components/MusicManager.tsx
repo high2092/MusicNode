@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { Ref, useEffect, useRef, useState } from 'react';
 import { httpGet, httpPost, shortenMusicName, validateVideoId } from '../utils/common';
-import { Music } from './Music';
+import { MusicComponent } from './Music';
 import * as S from './styles/MusicManager';
 import { FieldValues, useForm } from 'react-hook-form';
 import { SearchResultList } from './SearchResultList';
 import { useRecoilState } from 'recoil';
-import { currentMusicNodeInfoAtom, isPlayingAtom } from '../store';
-import YouTube from 'react-youtube';
+import { currentMusicNodeInfoAtom, isPlayingAtom, musicMapAtom } from '../store';
+import YouTube, { YouTubePlayer } from 'react-youtube';
 import { usePrevMusicNodeStack } from './hooks/usePrevMusicNodeStack';
+import { Music } from '../domain/Music';
 
 class SearchFilter {
   trim(value: string) {
@@ -20,7 +21,12 @@ class SearchFilter {
   }
 }
 
-export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtubePlayerRef }) => {
+interface MusicManagerProps {
+  handleMusicClick: () => void;
+  youtubePlayerRef: Ref<YouTubePlayer>;
+}
+
+export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
   const { register, handleSubmit, getValues, setValue } = useForm();
   const searchButtonRef = useRef<HTMLButtonElement>();
   const [searchResultList, setSearchResultList] = useState([]);
@@ -33,8 +39,9 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
   const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom);
   const prevMusicNodeStack = usePrevMusicNodeStack();
+  const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
 
-  const filteredMusicList = searchFilter.filter(musicList, query);
+  const filteredMusicList = searchFilter.filter(Array.from(musicMap.values()), query);
 
   useEffect(() => {
     if (!youtubePlayerRef.current) return;
@@ -52,7 +59,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
 
     if (response.ok) {
       const { id } = await response.json();
-      setMusicList((musicList) => [...musicList, { id, name: musicName, videoId }]);
+      setMusicMap(musicMap.set(id, new Music({ id, name: musicName, videoId })));
     }
   };
 
@@ -163,7 +170,7 @@ export const MusicManager = ({ musicList, setMusicList, handleMusicClick, youtub
           {filteredMusicList.map(({ id, name, videoId }) => {
             return (
               <li key={`music-${id}`} onClick={_handleMusicClick(id)}>
-                <Music id={id} name={name} videoId={videoId} selected={selectedMusicId === id} />
+                <MusicComponent id={id} name={name} videoId={videoId} selected={selectedMusicId === id} />
               </li>
             );
           })}

@@ -76,13 +76,13 @@ export const validateVideoId = async (videoId) => {
   return response.ok;
 };
 
-export const createPlaylistByHead: (head: number, musicNodeList: IMusicNode[]) => Playlist = (head: number, musicNodeList: IMusicNode[]) => {
+export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMusicNode>) => Playlist = (head, musicNodeMap) => {
   let curr = head;
 
   let contents: Playlist = new Map<number, MusicInfo>();
 
   while (curr) {
-    const node = musicNodeList.find((node) => node.id === curr);
+    const node = musicNodeMap.get(curr);
 
     contents.set(curr, new MusicInfo(node.musicName, node.videoId));
 

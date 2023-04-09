@@ -53,7 +53,7 @@ const mixColor = (color1: string, color2: string, ratio: number = 0.5): string =
   return rgbToColor([r, g, b]);
 };
 
-const groupingV4 = (musicNodeList: IMusicNode[]) => {
+const groupingV4 = (musicNodeMap: Map<number, IMusicNode>) => {
   const visited = [];
   const group = {};
   const stack = [];
@@ -88,7 +88,7 @@ const groupingV4 = (musicNodeList: IMusicNode[]) => {
     visited[id] = 1;
     stack.push(id);
 
-    const next = musicNodeList.find((node) => node.id === id).next;
+    const next = musicNodeMap.get(id).next;
 
     if (next === null) {
       roots.push(id);
@@ -110,9 +110,9 @@ const groupingV4 = (musicNodeList: IMusicNode[]) => {
     return (group[id] = result);
   };
 
-  for (const { id } of musicNodeList) {
+  musicNodeMap.forEach((node, id) => {
     dfs(id);
-  }
+  });
 
   const dfs2 = (id: number, seq: number) => {
     rank[id] = seq;
@@ -171,17 +171,17 @@ const 순서에_따른_연하게_할_수준_결정 = (rank, total) => {
   return ratio;
 };
 
-export const convertMusicNodeToReactFlowObject = (musicNodeList: IMusicNode[]) => {
+export const convertMusicNodeToReactFlowObject = (musicNodeMap: Map<number, IMusicNode>) => {
   const DEFAULT_WHITE_PAINT_RATIO = 0.4; // 전체적으로 얼마나 옅은 색을 띌 지
   const WHITE = '#ffffff';
   const TEST_COLOR = '#000000';
   const SPECTRUM_FACTOR = 0.9; // 얼마나 다양한 색으로 분포될지
 
-  const { group, groupNum, groups, rank } = groupingV4(musicNodeList);
+  const { group, groupNum, groups, rank } = groupingV4(musicNodeMap);
 
   const TEST_COLORS = Array.from({ length: groupNum + 1 }, () => generateRandomHexColor());
 
-  const nodes = musicNodeList.map(
+  const nodes = Array.from(musicNodeMap.values()).map(
     ({ id, musicName, position, videoId }) =>
       new ReactFlowNode({
         id,
@@ -194,7 +194,7 @@ export const convertMusicNodeToReactFlowObject = (musicNodeList: IMusicNode[]) =
 
   const edges = [];
 
-  musicNodeList.forEach(({ id, next }) => {
+  musicNodeMap.forEach(({ id, next }) => {
     if (next) edges.push({ source: id.toString(), target: next.toString(), id: `e${id}-${next}`, markerEnd: { type: MarkerType.Arrow } });
   });
 

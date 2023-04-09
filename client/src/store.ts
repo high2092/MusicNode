@@ -1,13 +1,14 @@
 import { atom, selector } from 'recoil';
 import { MusicInfo, Playlist } from './domain/MusicInfo';
 
-export const musicListAtom = atom<IMusic[]>({
-  key: 'musicListAtom',
-  default: [],
+export const musicMapAtom = atom<Map<number, IMusic>>({
+  key: 'musicMapAtom',
+  default: new Map<number, IMusic>(),
 });
-export const musicNodeListAtom = atom<IMusicNode[]>({
-  key: 'musicNodeListAtom',
-  default: [],
+
+export const musicNodeMapAtom = atom<Map<number, IMusicNode>>({
+  key: 'musicNodeMapAtom',
+  default: new Map<number, IMusicNode>(),
 });
 
 export const currentMusicNodeInfoAtom = atom<IMusicNodeInfo>({

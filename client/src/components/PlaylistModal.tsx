@@ -26,8 +26,8 @@ export const PlaylistModal = () => {
   return (
     <S.PlaylistModal x={x} y={y} onClick={(e) => e.stopPropagation()}>
       <S.Playlist>
-        {Array.from(playlist.values()).map(({ name, cycle }) => (
-          <S.MusicInfo>{`${name}${cycle ? ' <' : ''}`}</S.MusicInfo>
+        {Array.from(playlist.values()).map(({ name, cycle }, idx) => (
+          <S.MusicInfo key={`playlist-${idx}`}>{`${name}${cycle ? ' <' : ''}`}</S.MusicInfo>
         ))}
       </S.Playlist>
       <S.PlaylistSubmitForm onSubmit={handleSubmit(handlePlaylistCreate)}>

@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
-import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicListAtom, musicNodeListAtom, playlistAtom } from '../store';
+import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, playlistAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { Position } from '../domain/Position';
 import { Music } from '../domain/Music';
@@ -22,8 +22,8 @@ class SelectedObject {
 type ReactFlowObjectType = typeof ReactFlowObjectTypes[keyof typeof ReactFlowObjectTypes];
 
 export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }) => {
-  const [musicList, setMusicList] = useRecoilState(musicListAtom);
-  const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
+  const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
+  const [musicNodeMap, setMusicNodeMap] = useRecoilState(musicNodeMapAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
   const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
   const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
@@ -78,7 +78,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   const handleNodeClick = (e: React.MouseEvent, node: Node) => {
     e.stopPropagation();
 
-    setPlaylist(createPlaylistByHead(Number(node.id), musicNodeList));
+    setPlaylist(createPlaylistByHead(Number(node.id), musicNodeMap));
 
     setClickEventPosition({
       x: e.clientX,
@@ -115,15 +115,9 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     if (!response.ok) {
       console.log('patch failed');
     }
-    const node = musicNodeList.find((node) => node.id === Number(id));
+    const node = musicNodeMap.get(id);
 
-    setMusicNodeList((musicNodeList) => [
-      ...musicNodeList,
-      new MusicNode({
-        ...node,
-        position,
-      }),
-    ]);
+    setMusicNodeMap(musicNodeMap.set(id, { ...node, position }));
   };
 
   const handleReactFlowKeyDown = async ({ key }) => {
@@ -134,7 +128,10 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         case ReactFlowObjectTypes.NODE: {
           const response = await httpDelete(`node/${id}`);
           if (response.ok) {
-            setMusicNodeList((musicNodeList) => musicNodeList.filter((node) => node.id !== Number(id)));
+            setMusicNodeMap((musicNodeMap) => {
+              musicNodeMap.delete(Number(id));
+              return musicNodeMap;
+            });
           }
           break;
         }
@@ -160,8 +157,8 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         if (response.ok) {
           const { musicId, nodeId } = await response.json();
           console.log(musicId, nodeId);
-          setMusicList((musicList) => [...musicList, new Music({ id: musicId, name: musicName, videoId })]);
-          setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id: nodeId, musicId, videoId, musicName })]);
+          setMusicMap(musicMap.set(musicId, new Music({ id: musicId, name: musicName, videoId })));
+          setMusicNodeMap(musicNodeMap.set(nodeId, new MusicNode({ id: nodeId, musicId, videoId, musicName })));
           setNodes((nodes) => nodes.concat(new ReactFlowNode({ id: nodeId, musicName, videoId })));
         }
         break;
@@ -173,8 +170,8 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         if (response.ok) {
           const { id } = await response.json();
 
-          const music = musicList.find((music) => music.id === musicId);
-          setMusicNodeList((musicNodeList) => [...musicNodeList, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })]);
+          const music = musicMap.get(musicId);
+          setMusicNodeMap(musicNodeMap.set(id, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })));
           setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
         }
         break;

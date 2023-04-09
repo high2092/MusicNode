@@ -9,7 +9,7 @@ interface MusicProps {
   selected: boolean;
 }
 
-export const Music = ({ id, name, videoId, selected }: MusicProps) => {
+export const MusicComponent = ({ id, name, videoId, selected }: MusicProps) => {
   const handleDragStart = (e: React.DragEvent, data: DragTransferData) => {
     e.dataTransfer.setData('application/reactflow', JSON.stringify(data));
     e.dataTransfer.effectAllowed = 'move';
