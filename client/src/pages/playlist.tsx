@@ -3,26 +3,53 @@ import { GetServerSidePropsContext } from 'next';
 import { axiosHttpGet } from '../utils/common';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { playlistMapAtom } from '../store';
-import { Playlist } from '../components/Playlist';
+import { isVisiblePlaylistModalAtom, playlistMapAtom } from '../store';
+import { PlaylistComponent } from '../components/Playlist';
+import { PlaylistModal } from '../components/PlaylistModal';
+import { MusicInfo } from '../domain/MusicInfo';
+import { Playlist } from '../domain/Playlist';
+import { PlaylistShareButton } from '../components/PlaylistShareButton';
 
 interface PlaylistPageProps {
-  initialPlaylists: IPlaylist[];
+  initialPlaylists: {
+    id: number;
+    contents: string;
+    name: string;
+  }[];
 }
 
 const PlaylistPage = ({ initialPlaylists }: PlaylistPageProps) => {
   const [playlistMap, setPlaylistMap] = useRecoilState(playlistMapAtom);
-  const initialPlaylistMap = new Map(initialPlaylists.map((playlist) => [playlist.id, playlist]));
+  const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
+  const initialPlaylistMap = new Map<number, IPlaylist>(initialPlaylists.map((playlist) => [playlist.id, new Playlist(playlist)]));
 
   useEffect(() => {
+    // setIsVisiblePlaylistModal(false);
     setPlaylistMap(initialPlaylistMap);
   }, []);
 
+  useEffect(() => {
+    const handleDocumentClick = () => {
+      setIsVisiblePlaylistModal(false);
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, []);
+
+  const handleShareButtonClick = () => {};
+
   return (
     <div>
-      {Array.from(playlistMap.values()).map(({ id, name }) => (
-        <Playlist key={`playlist-page-playlist-${id}`} id={id} name={name} />
-      ))}
+      <div>
+        {Array.from(playlistMap.values()).map(({ id, name }) => (
+          <PlaylistComponent key={`playlist-page-playlist-${id}`} id={id} name={name} />
+        ))}
+      </div>
+      {isVisiblePlaylistModal && <PlaylistModal BottomElement={<PlaylistShareButton />} />}
     </div>
   );
 };
@@ -36,7 +63,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
   try {
     response = await axiosHttpGet('playlist', req.headers.cookie);
-    initialPlaylists = response.data.data;
+    initialPlaylists = response.data;
   } catch (e) {
     console.log(e);
   }

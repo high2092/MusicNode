@@ -38,10 +38,10 @@ export const clickEventPositionAtom = atom<{ x: number; y: number }>({
 
 export const selectedPlaylistAtom = atom<IPlaylist>({
   key: 'selectedPlaylistAtom',
-  default: { id: undefined, name: undefined, contents: undefined },
+  default: { id: undefined, name: undefined, contents: new Map<number, MusicInfo>() },
 });
 
 export const playlistMapAtom = atom<Map<number, IPlaylist>>({
-  key: '',
+  key: 'playlistMapAtom',
   default: new Map<number, IPlaylist>(),
 });

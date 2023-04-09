@@ -1,7 +1,8 @@
 import { FieldValues } from 'react-hook-form';
-import { API_HOST } from '../constants';
+import { ALGORITHM, API_HOST, IV, SECRET_KEY } from '../constants';
 import axios from 'axios';
 import { MusicInfo } from '../domain/MusicInfo';
+import crypto from 'crypto';
 
 export const axiosHttpGet = async (path: string, cookie: string) => {
   const response = await axios.get(`${API_HOST}/${path}`, {
@@ -96,4 +97,15 @@ export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMus
   }
 
   return { contents };
+};
+
+const encode = (plain: string) => {
+  // 테스트용
+  const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY, 'hex'), Buffer.from(IV, 'hex'));
+  return cipher.update(plain, 'utf8', 'hex') + cipher.final('hex');
+};
+
+export const convertPlaylistToCode = (playlist: IPlaylist) => {
+  const contents = JSON.stringify(Object.fromEntries(playlist.contents));
+  return encode(contents);
 };

@@ -13,3 +13,5 @@
 .next
 
 .DS_Store
+
+.env

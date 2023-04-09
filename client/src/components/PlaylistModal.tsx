@@ -4,7 +4,11 @@ import { clickEventPositionAtom, selectedPlaylistAtom } from '../store';
 import { httpPost } from '../utils/common';
 import { FieldValues, useForm } from 'react-hook-form';
 
-export const PlaylistModal = () => {
+interface PlaylistModalProps {
+  BottomElement: JSX.Element;
+}
+
+export const PlaylistModal = ({ BottomElement }: PlaylistModalProps) => {
   const { x, y } = useRecoilValue(clickEventPositionAtom);
 
   const playlist = useRecoilValue(selectedPlaylistAtom);
@@ -30,10 +34,7 @@ export const PlaylistModal = () => {
           <S.MusicInfo key={`playlist-${idx}`}>{`${name}${cycle ? ' <' : ''}`}</S.MusicInfo>
         ))}
       </S.Playlist>
-      <S.PlaylistSubmitForm onSubmit={handleSubmit(handlePlaylistCreate)}>
-        <S.PlaylistNameInput {...register('name')} placeholder="플레이리스트 이름" />
-        <S.PlaylistCreateButton>플레이리스트 생성</S.PlaylistCreateButton>
-      </S.PlaylistSubmitForm>
+      {BottomElement}
     </S.PlaylistModal>
   );
 };

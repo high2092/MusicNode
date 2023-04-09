@@ -15,6 +15,7 @@ import type { GetServerSidePropsContext } from 'next';
 import type { AxiosResponse } from 'axios';
 import { PlaylistModal } from '../components/PlaylistModal';
 import { MusicInfo } from '../domain/MusicInfo';
+import { PlaylistSubmitForm } from '../components/PlaylistSubmitForm';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -91,7 +92,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
       <div>
         <MusicManager handleMusicClick={handleMusicClick} youtubePlayerRef={youtubePlayerRef} />
       </div>
-      {isVisiblePlaylistModal && <PlaylistModal />}
+      {isVisiblePlaylistModal && <PlaylistModal BottomElement={<PlaylistSubmitForm />} />}
     </div>
   );
 };

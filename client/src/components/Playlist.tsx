@@ -1,12 +1,22 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { selectedPlaylistAtom, playlistMapAtom } from '../store';
+import { selectedPlaylistAtom, playlistMapAtom, isVisiblePlaylistModalAtom, clickEventPositionAtom } from '../store';
 
-export const Playlist = ({ id, name }) => {
+export const PlaylistComponent = ({ id, name }) => {
   const playlistMap = useRecoilValue(playlistMapAtom);
   const [playlist, setPlaylist] = useRecoilState(selectedPlaylistAtom);
-  const handleClick = (id: number) => () => {
+  const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
+  const [clickEventPosition, setClickEventPosition] = useRecoilState(clickEventPositionAtom);
+  const handleClick = (id: number) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+
     const playlist = playlistMap.get(id);
+
+    setClickEventPosition({
+      x: e.clientX,
+      y: e.clientY,
+    });
     setPlaylist(playlist);
+    setIsVisiblePlaylistModal(true);
   };
 
   return <div onClick={handleClick(id)}>{name}</div>;
