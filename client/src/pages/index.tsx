@@ -8,11 +8,12 @@ import { MusicNode } from '../domain/MusicNode';
 import { convertMusicNodeToReactFlowObject } from '../utils/ReactFlow';
 import { useEdgesState, useNodesState } from 'reactflow';
 import { useRecoilState } from 'recoil';
-import { currentMusicNodeInfoAtom, isPlayingAtom, musicListAtom, musicNodeListAtom } from '../store';
+import { currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicListAtom, musicNodeListAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { YouTubePlayer } from 'react-youtube';
 import type { GetServerSidePropsContext } from 'next';
 import type { AxiosResponse } from 'axios';
+import { PlaylistModal } from '../components/PlaylistModal';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -22,6 +23,7 @@ interface NodePageProps {
 const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const [musicList, setMusicList] = useRecoilState(musicListAtom);
   const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
+  const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
 
   const musicNameRef = useRef<HTMLInputElement>();
 
@@ -34,6 +36,18 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   useEffect(() => {
     setMusicList(initialMusicList);
     setMusicNodeList(initialMusicNodeList);
+  }, []);
+
+  useEffect(() => {
+    const handleDocumentClick = () => {
+      setIsVisiblePlaylistModal(false);
+    };
+
+    document.addEventListener('click', handleDocumentClick);
+
+    return () => {
+      document.removeEventListener('click', handleDocumentClick);
+    };
   }, []);
 
   const { register, handleSubmit, setValue } = useForm();
@@ -73,6 +87,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
       <div>
         <MusicManager musicList={musicList} setMusicList={setMusicList} handleMusicClick={handleMusicClick} youtubePlayerRef={youtubePlayerRef} />
       </div>
+      {isVisiblePlaylistModal && <PlaylistModal />}
     </div>
   );
 };

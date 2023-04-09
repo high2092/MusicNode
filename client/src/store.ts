@@ -1,4 +1,5 @@
 import { atom, selector } from 'recoil';
+import { MusicInfo, Playlist } from './domain/MusicInfo';
 
 export const musicListAtom = atom<IMusic[]>({
   key: 'musicListAtom',
@@ -22,4 +23,19 @@ export const isPlayingAtom = atom<boolean>({
 export const prevMusicNodeStackAtom = atom<IMusicNodeInfo[]>({
   key: 'prevMusicNodeStackAtom',
   default: [],
+});
+
+export const isVisiblePlaylistModalAtom = atom<boolean>({
+  key: 'isVisiblePlaylistModal',
+  default: false,
+});
+
+export const clickEventPositionAtom = atom<{ x: number; y: number }>({
+  key: 'clickEventPositionAtom',
+  default: { x: 0, y: 0 },
+});
+
+export const playlistAtom = atom<Playlist>({
+  key: 'playlistAtom',
+  default: new Map<number, MusicInfo>(),
 });

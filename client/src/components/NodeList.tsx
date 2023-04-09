@@ -3,13 +3,13 @@ import * as S from './styles/NodeList';
 import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType } from 'reactflow';
 import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
-import { httpDelete, httpPatch, httpPost, validateVideoId } from '../utils/common';
+import { createPlaylistByHead, httpDelete, httpPatch, httpPost, validateVideoId } from '../utils/common';
 import { DragTransferTypes, ReactFlowObjectTypes, convertClassListStringToReactFlowType, convertMusicNodeToReactFlowObject, createArrowEdge } from '../utils/ReactFlow';
 import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
-import { currentMusicNodeInfoAtom, isPlayingAtom, musicListAtom, musicNodeListAtom } from '../store';
+import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicListAtom, musicNodeListAtom, playlistAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { Position } from '../domain/Position';
 import { Music } from '../domain/Music';
@@ -26,6 +26,9 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   const [musicNodeList, setMusicNodeList] = useRecoilState(musicNodeListAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
   const [currentMusicInfo, setCurrentMusicInfo] = useRecoilState(currentMusicNodeInfoAtom);
+  const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
+  const [clickEventPosition, setClickEventPosition] = useRecoilState(clickEventPositionAtom);
+  const [playlist, setPlaylist] = useRecoilState(playlistAtom);
 
   const selectedObjectRef = useRef<SelectedObject>(new SelectedObject());
 
@@ -73,8 +76,16 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
    * 더블클릭으로 대체
    */
   const handleNodeClick = (e: React.MouseEvent, node: Node) => {
-    if (selectedObjectRef.current.type === ReactFlowObjectTypes.EDGE_SOURCE || selectedObjectRef.current.type === ReactFlowObjectTypes.EDGE_TARGET) return; // 1곡 반복재생 설정하는 인터페이스에 해당
-    window.open(`/music-node/${node.id}`);
+    e.stopPropagation();
+
+    setPlaylist(createPlaylistByHead(Number(node.id), musicNodeList));
+
+    setClickEventPosition({
+      x: e.clientX,
+      y: e.clientY,
+    });
+
+    setIsVisiblePlaylistModal(true);
   };
 
   // ReactFlow 컴포넌트에 onNodeMouseDown 속성이 있었다면 더 좋았을텐데 아쉽다
@@ -181,6 +192,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         onEdgesChange={onEdgesChange}
         onEdgeUpdate={handleEdgeUpdate}
         onConnect={onConnect}
+        onNodeClick={handleNodeClick}
         onNodeDoubleClick={handleNodeDoubleClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
         // onNodesDelete={handleNodesDelete} // NodeDragStop 이벤트 및 nodes 상태 관리 관련 문제로 동작 X

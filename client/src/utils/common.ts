@@ -1,6 +1,7 @@
 import { FieldValues } from 'react-hook-form';
 import { API_HOST } from '../constants';
 import axios from 'axios';
+import { MusicInfo, Playlist } from '../domain/MusicInfo';
 
 export const axiosHttpGet = async (path: string, cookie: string) => {
   const response = await axios.get(`${API_HOST}/${path}`, {
@@ -73,4 +74,26 @@ export const validateVideoId = async (videoId) => {
   }
 
   return response.ok;
+};
+
+export const createPlaylistByHead: (head: number, musicNodeList: IMusicNode[]) => Playlist = (head: number, musicNodeList: IMusicNode[]) => {
+  let curr = head;
+
+  let contents: Playlist = new Map<number, MusicInfo>();
+
+  while (curr) {
+    const node = musicNodeList.find((node) => node.id === curr);
+
+    contents.set(curr, new MusicInfo(node.musicName, node.videoId));
+
+    if (contents.get(node.next)) {
+      contents.get(node.next).cycle = 'head';
+      contents.get(curr).cycle = 'tail';
+      break;
+    }
+
+    curr = node.next;
+  }
+
+  return contents;
 };
