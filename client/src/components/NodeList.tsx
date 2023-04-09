@@ -45,6 +45,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   };
 
   const onConnect = useCallback(
+    // TODO: TypeScript
     async (params) => {
       // 역방향 연결을 허용하지 않음
       if (selectedObjectRef.current?.type === ReactFlowObjectTypes.EDGE_TARGET) return;
@@ -57,6 +58,10 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
           edges = edges.filter((edge) => edge.source !== params.source);
           edges.push(createArrowEdge(params));
           return edges;
+        });
+        setMusicNodeMap((musicMap) => {
+          const node = musicMap.get(Number(params.source));
+          return musicMap.set(node.id, { ...node, next: Number(params.target) });
         });
       }
     },
@@ -103,6 +108,11 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     if (!response.ok) {
       setEdges((edges) => {
         return edges.concat(edge);
+      });
+    } else {
+      setMusicNodeMap((musicMap) => {
+        const node = musicMap.get(Number(edge.source));
+        return musicMap.set(node.id, { ...node, next: null });
       });
     }
 
