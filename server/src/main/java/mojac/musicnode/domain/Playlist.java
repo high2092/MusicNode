@@ -1,32 +1,34 @@
 package mojac.musicnode.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import mojac.musicnode.domain.thumb.Thumbs;
 
 import java.util.List;
 
 @Entity
-public class MusicList {
+@Getter
+public class Playlist {
     @Id @GeneratedValue
     @Column(name = "music_list_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private MusicNode head;
+    private String contents; // JSON String
 
     private String name;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "musicList")
+    @OneToMany(mappedBy = "playlist")
     private List<Thumbs> thumbs;
 
-    protected MusicList() {}
+    protected Playlist() {}
 
-    public MusicList(String name, Member member) {
+    public Playlist(String name, String contents, Member member) {
         this.name = name;
+        this.contents = contents;
         this.member = member;
     }
 

@@ -2,7 +2,7 @@ package mojac.musicnode.domain.thumb;
 
 import jakarta.persistence.*;
 import mojac.musicnode.domain.Member;
-import mojac.musicnode.domain.MusicList;
+import mojac.musicnode.domain.Playlist;
 
 import java.time.LocalDateTime;
 
@@ -20,13 +20,13 @@ public abstract class Thumbs {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "music_list_id")
-    private MusicList musicList;
+    private Playlist playlist;
 
     private LocalDateTime createdAt;
 
-    Thumbs(Member member, MusicList musicList) {
+    Thumbs(Member member, Playlist playlist) {
         this.member = member;
-        this.musicList = musicList;
+        this.playlist = playlist;
         this.createdAt = LocalDateTime.now();
     }
 }
