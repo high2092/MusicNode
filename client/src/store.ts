@@ -1,6 +1,7 @@
 import { atom, selector } from 'recoil';
 import type { ReactFlowInstance } from 'reactflow';
 import { MusicInfo } from './domain/MusicInfo';
+import { Playlist } from './domain/Playlist';
 
 export const musicMapAtom = atom<Map<number, IMusic>>({
   key: 'musicMapAtom',
@@ -37,14 +38,14 @@ export const clickEventPositionAtom = atom<{ x: number; y: number }>({
   default: { x: 0, y: 0 },
 });
 
-export const selectedPlaylistAtom = atom<IPlaylist>({
+export const selectedPlaylistAtom = atom<Playlist>({
   key: 'selectedPlaylistAtom',
-  default: { id: undefined, name: undefined, contents: new Map<number, MusicInfo>() },
+  default: { id: undefined, name: undefined, contents: [] },
 });
 
-export const playlistMapAtom = atom<Map<number, IPlaylist>>({
+export const playlistMapAtom = atom<Map<number, Playlist>>({
   key: 'playlistMapAtom',
-  default: new Map<number, IPlaylist>(),
+  default: new Map<number, Playlist>(),
 });
 
 export const reactFlowInstanceAtom = atom<ReactFlowInstance>({

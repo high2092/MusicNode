@@ -7,13 +7,13 @@ interface PlaylistConstructorProps {
 }
 
 export class Playlist {
-  id: number;
-  name: string;
-  contents: Map<number, MusicInfo>;
+  id?: number;
+  name?: string;
+  contents: MusicInfo[];
 
   constructor({ id, name, contents }: PlaylistConstructorProps) {
     this.id = id;
     this.name = name;
-    this.contents = new Map(Object.entries(JSON.parse(contents))) as unknown as Map<number, MusicInfo>;
+    this.contents = Object.values(JSON.parse(contents));
   }
 }

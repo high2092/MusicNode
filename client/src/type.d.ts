@@ -23,9 +23,3 @@ interface IMusicNodeInfo {
   musicName: string;
   videoId: string;
 }
-
-interface IPlaylist {
-  id?: number;
-  name?: string;
-  contents: Map<number, IMusicInfo>;
-}

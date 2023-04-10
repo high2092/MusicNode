@@ -5,6 +5,7 @@ import { MusicInfo } from '../domain/MusicInfo';
 import crypto from 'crypto';
 import { ReactFlowInstance } from 'reactflow';
 import zlib from 'zlib';
+import { Playlist } from '../domain/Playlist';
 
 export const axiosHttpGet = async (path: string, cookie: string) => {
   const response = await axios.get(`${API_HOST}/${path}`, {
@@ -79,23 +80,27 @@ export const validateVideoId = async (videoId) => {
   return response.ok;
 };
 
-export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMusicNode>) => IPlaylist = (head, musicNodeMap) => {
+export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMusicNode>) => Playlist = (head, musicNodeMap) => {
   let curr = head;
 
-  const contents = new Map<number, MusicInfo>();
+  let count = 0;
+  const visited = {};
+  const contents = [];
 
   while (curr) {
     const node = musicNodeMap.get(curr);
 
-    contents.set(curr, new MusicInfo(node.musicName, node.videoId));
+    contents.push(new MusicInfo(node.musicName, node.videoId));
+    visited[curr] = count;
 
-    if (contents.get(node.next)) {
-      contents.get(node.next).cycle = 'head';
-      contents.get(curr).cycle = 'tail';
+    if (visited[node.next]) {
+      contents[visited[node.next]].cycle = 'head';
+      contents[count].cycle = 'tail';
       break;
     }
 
     curr = node.next;
+    count++;
   }
 
   return { contents };
@@ -107,8 +112,8 @@ const encodeV1 = (plain: string) => {
   return cipher.update(plain, 'utf8', 'hex') + cipher.final('hex');
 };
 
-export const convertPlaylistToCode = (playlist: IPlaylist) => {
-  const contents = JSON.stringify(Object.fromEntries(playlist.contents));
+export const convertPlaylistToCode = (playlist: Playlist) => {
+  const contents = JSON.stringify(playlist.contents);
   return encodeV2(contents);
 };
 

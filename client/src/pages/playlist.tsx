@@ -21,7 +21,7 @@ interface PlaylistPageProps {
 const PlaylistPage = ({ initialPlaylists }: PlaylistPageProps) => {
   const [playlistMap, setPlaylistMap] = useRecoilState(playlistMapAtom);
   const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
-  const initialPlaylistMap = new Map<number, IPlaylist>(initialPlaylists.map((playlist) => [playlist.id, new Playlist(playlist)]));
+  const initialPlaylistMap = new Map<number, Playlist>(initialPlaylists.map((playlist) => [playlist.id, new Playlist(playlist)]));
 
   useEffect(() => {
     // setIsVisiblePlaylistModal(false);

@@ -16,7 +16,7 @@ export const PlaylistModal = ({ BottomElement }: PlaylistModalProps) => {
   const { register, handleSubmit } = useForm();
 
   const handlePlaylistCreate = async (formData: FieldValues) => {
-    const contents = JSON.stringify(Object.fromEntries(playlist.contents));
+    const contents = JSON.stringify(playlist.contents);
     const response = await httpPost('playlist', {
       name: formData.name,
       contents,
