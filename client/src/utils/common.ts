@@ -114,11 +114,11 @@ export const convertPlaylistToCode = (playlist: IPlaylist) => {
 
 const encodeV2 = (plain: string) => {
   const compressedBytes = zlib.deflateSync(plain);
-  return Buffer.from(compressedBytes).toString('base64');
+  return encodeURIComponent(Buffer.from(compressedBytes).toString('base64'));
 };
 
 const decodeV2 = (encoded: string) => {
-  const compressedBuffer = Buffer.from(encoded, 'base64');
+  const compressedBuffer = Buffer.from(decodeURIComponent(encoded), 'base64');
   const decompressedBuffer = zlib.inflateSync(compressedBuffer);
   return decompressedBuffer.toString('utf-8');
 };
