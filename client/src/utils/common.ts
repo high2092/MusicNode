@@ -122,3 +122,13 @@ const decodeV2 = (encoded: string) => {
   const decompressedBuffer = zlib.inflateSync(compressedBuffer);
   return decompressedBuffer.toString('utf-8');
 };
+
+export const copyToClipboard = (text: string) => {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textarea);
+};
