@@ -4,6 +4,7 @@ import axios from 'axios';
 import { MusicInfo } from '../domain/MusicInfo';
 import crypto from 'crypto';
 import { ReactFlowInstance } from 'reactflow';
+import zlib from 'zlib';
 
 export const axiosHttpGet = async (path: string, cookie: string) => {
   const response = await axios.get(`${API_HOST}/${path}`, {
@@ -100,7 +101,7 @@ export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMus
   return { contents };
 };
 
-const encode = (plain: string) => {
+const encodeV1 = (plain: string) => {
   // 테스트용
   const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY, 'hex'), Buffer.from(IV, 'hex'));
   return cipher.update(plain, 'utf8', 'hex') + cipher.final('hex');
@@ -108,5 +109,16 @@ const encode = (plain: string) => {
 
 export const convertPlaylistToCode = (playlist: IPlaylist) => {
   const contents = JSON.stringify(Object.fromEntries(playlist.contents));
-  return encode(contents);
+  return encodeV2(contents);
+};
+
+const encodeV2 = (plain: string) => {
+  const compressedBytes = zlib.deflateSync(plain);
+  return Buffer.from(compressedBytes).toString('base64');
+};
+
+const decodeV2 = (encoded: string) => {
+  const compressedBuffer = Buffer.from(encoded, 'base64');
+  const decompressedBuffer = zlib.inflateSync(compressedBuffer);
+  return decompressedBuffer.toString('utf-8');
 };
