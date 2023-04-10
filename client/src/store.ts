@@ -1,4 +1,5 @@
 import { atom, selector } from 'recoil';
+import type { ReactFlowInstance } from 'reactflow';
 import { MusicInfo } from './domain/MusicInfo';
 
 export const musicMapAtom = atom<Map<number, IMusic>>({
@@ -44,4 +45,9 @@ export const selectedPlaylistAtom = atom<IPlaylist>({
 export const playlistMapAtom = atom<Map<number, IPlaylist>>({
   key: 'playlistMapAtom',
   default: new Map<number, IPlaylist>(),
+});
+
+export const reactFlowInstanceAtom = atom<ReactFlowInstance>({
+  key: 'reactFlowInstanceAtom',
+  default: undefined,
 });

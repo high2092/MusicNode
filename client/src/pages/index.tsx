@@ -7,8 +7,8 @@ import { Position } from '../domain/Position';
 import { MusicNode } from '../domain/MusicNode';
 import { convertMusicNodeToReactFlowObject } from '../utils/ReactFlow';
 import { useEdgesState, useNodesState } from 'reactflow';
-import { useRecoilState } from 'recoil';
-import { currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom } from '../store';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, reactFlowInstanceAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { YouTubePlayer } from 'react-youtube';
 import type { GetServerSidePropsContext } from 'next';
@@ -26,6 +26,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
   const [musicNodeMap, setMusicNodeMap] = useRecoilState(musicNodeMapAtom);
   const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
+  const reactFlowInstance = useRecoilValue(reactFlowInstanceAtom);
 
   const initialMusicMap = new Map(initialMusicList.map((music) => [music.id, music]));
   const initialMusicNodeMap = new Map(initialMusicNodeList.map((node) => [node.id, node]));
@@ -68,12 +69,37 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
 
     const response = await httpPost('node', { musicId, color });
 
+    const MARGIN_TOP_MAX = 280;
+    const MARGIN_LEFT_MAX = 1200;
+
+    const position = reactFlowInstance.project({ x: MARGIN_LEFT_MAX * Math.random(), y: MARGIN_TOP_MAX * Math.random() });
+
     if (response.ok) {
       const { id } = await response.json();
 
       const music = musicMap.get(musicId);
-      setMusicNodeMap(musicNodeMap.set(id, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId })));
-      setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
+      setMusicNodeMap(
+        musicNodeMap.set(
+          id,
+          new MusicNode({
+            id,
+            musicId: music.id,
+            musicName: music.name,
+            videoId: music.videoId,
+            position,
+          })
+        )
+      );
+      setNodes((nodes) =>
+        nodes.concat(
+          new ReactFlowNode({
+            id,
+            musicName: music.name,
+            videoId: music.videoId,
+            position,
+          })
+        )
+      );
     }
   };
 

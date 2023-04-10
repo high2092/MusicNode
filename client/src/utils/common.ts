@@ -3,6 +3,7 @@ import { ALGORITHM, API_HOST, IV, SECRET_KEY } from '../constants';
 import axios from 'axios';
 import { MusicInfo } from '../domain/MusicInfo';
 import crypto from 'crypto';
+import { ReactFlowInstance } from 'reactflow';
 
 export const axiosHttpGet = async (path: string, cookie: string) => {
   const response = await axios.get(`${API_HOST}/${path}`, {

@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
-import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, selectedPlaylistAtom } from '../store';
+import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, reactFlowInstanceAtom, selectedPlaylistAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
 import { Position } from '../domain/Position';
 import { Music } from '../domain/Music';
@@ -29,6 +29,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   const [isVisiblePlaylistModal, setIsVisiblePlaylistModal] = useRecoilState(isVisiblePlaylistModalAtom);
   const [clickEventPosition, setClickEventPosition] = useRecoilState(clickEventPositionAtom);
   const [playlist, setPlaylist] = useRecoilState(selectedPlaylistAtom);
+  const [reactFlowInstance, setReactFlowInstance] = useRecoilState(reactFlowInstanceAtom);
 
   const selectedObjectRef = useRef<SelectedObject>(new SelectedObject());
 
@@ -158,6 +159,13 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     e.preventDefault();
     const { musicId, musicName, type, videoId } = JSON.parse(e.dataTransfer.getData('application/reactflow'));
 
+    const EPSILON = 50;
+
+    const position = reactFlowInstance.project({
+      x: e.clientX - EPSILON,
+      y: e.clientY - EPSILON,
+    });
+
     switch (type) {
       case DragTransferTypes.SEARCH_RESULT: {
         if (!validateVideoId(videoId)) return;
@@ -168,8 +176,8 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
           const { musicId, nodeId } = await response.json();
           console.log(musicId, nodeId);
           setMusicMap(musicMap.set(musicId, new Music({ id: musicId, name: musicName, videoId })));
-          setMusicNodeMap(musicNodeMap.set(nodeId, new MusicNode({ id: nodeId, musicId, videoId, musicName })));
-          setNodes((nodes) => nodes.concat(new ReactFlowNode({ id: nodeId, musicName, videoId })));
+          setMusicNodeMap(musicNodeMap.set(nodeId, new MusicNode({ id: nodeId, musicId, videoId, musicName, position })));
+          setNodes((nodes) => nodes.concat(new ReactFlowNode({ id: nodeId, musicName, videoId, position })));
         }
         break;
       }
@@ -181,8 +189,8 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
           const { id } = await response.json();
 
           const music = musicMap.get(musicId);
-          setMusicNodeMap(musicNodeMap.set(id, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, next: null, position: new Position() })));
-          setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId })));
+          setMusicNodeMap(musicNodeMap.set(id, new MusicNode({ id, musicId: music.id, musicName: music.name, videoId: music.videoId, position })));
+          setNodes((nodes) => nodes.concat(new ReactFlowNode({ id, musicName: music.name, videoId: music.videoId, position })));
         }
         break;
       }
@@ -202,6 +210,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         onNodeClick={handleNodeClick}
         onNodeDoubleClick={handleNodeDoubleClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
+        onInit={setReactFlowInstance}
         // onNodesDelete={handleNodesDelete} // NodeDragStop 이벤트 및 nodes 상태 관리 관련 문제로 동작 X
         onEdgesDelete={handleEdgesDelete}
         onKeyDown={handleReactFlowKeyDown}
