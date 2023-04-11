@@ -1,12 +1,12 @@
 import { useRecoilValue } from 'recoil';
-import { convertPlaylistToCode, copyToClipboard } from '../utils/common';
+import { copyToClipboard, encodeV2 } from '../utils/common';
 import { selectedPlaylistAtom } from '../store';
 import { MAX_CODE_LENGTH, SHARE_HOST } from '../constants';
 
 export const PlaylistShareButton = () => {
   const playlist = useRecoilValue(selectedPlaylistAtom);
   const handleClick = () => {
-    const code = convertPlaylistToCode(playlist);
+    const code = encodeV2(JSON.stringify({ ...playlist, id: undefined }));
     const url = `${SHARE_HOST}/${code}`;
 
     const textToCopy = code.length <= MAX_CODE_LENGTH ? url : code;

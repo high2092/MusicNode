@@ -31,7 +31,7 @@ export const PlaylistModal = ({ BottomElement }: PlaylistModalProps) => {
     <S.PlaylistModal x={x} y={y} onClick={(e) => e.stopPropagation()}>
       <S.Playlist>
         {Array.from(playlist.contents.values()).map(({ name, cycle }, idx) => (
-          <S.MusicInfo key={`playlist-${idx}`}>{`${name}${cycle ? ' <' : ''}`}</S.MusicInfo>
+          <S.MusicInfo key={`music-info-${idx}`}>{`${name}${cycle ? ' <' : ''}`}</S.MusicInfo>
         ))}
       </S.Playlist>
       {BottomElement}

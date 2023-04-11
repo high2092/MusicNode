@@ -112,14 +112,9 @@ const encodeV1 = (plain: string) => {
   return cipher.update(plain, 'utf8', 'hex') + cipher.final('hex');
 };
 
-export const convertPlaylistToCode = (playlist: Playlist) => {
-  const contents = JSON.stringify(playlist.contents);
-  return encodeV2(contents);
-};
-
-const encodeV2 = (plain: string) => {
+export const encodeV2 = (plain: string) => {
   const compressedBytes = zlib.deflateSync(plain);
-  return encodeURIComponent(Buffer.from(compressedBytes).toString('base64'));
+  return 'v2' + encodeURIComponent(Buffer.from(compressedBytes).toString('base64'));
 };
 
 const decodeV2 = (encoded: string) => {
