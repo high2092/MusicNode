@@ -88,7 +88,7 @@ export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMus
     contents.push(new MusicInfo(node.musicName, node.videoId));
     visited[curr] = count;
 
-    if (visited[node.next]) {
+    if (visited[node.next] !== undefined) {
       contents[visited[node.next]].cycle = 'head';
       contents[count].cycle = 'tail';
       break;
