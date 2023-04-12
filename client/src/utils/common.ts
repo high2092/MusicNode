@@ -67,15 +67,10 @@ export const shortenMusicName = (name: string) => {
   else return `${name.substring(0, 30)}...`;
 };
 
-export const validateVideoId = async (videoId) => {
-  const response = await fetch(`http://img.youtube.com/vi/${videoId}/mqdefault.jpg`, {
+export const validateVideoId = async (videoId: string) => {
+  const response = await fetch(`/api/validate-video-id?videoId=${videoId}`, {
     method: 'GET',
   });
-
-  if (!response.ok) {
-    alert('유효하지 않은 비디오 ID입니다.');
-    return;
-  }
 
   return response.ok;
 };

@@ -54,7 +54,10 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
   const handleMusicSubmit = async (formData: FieldValues) => {
     const { videoId } = formData;
 
-    if (!validateVideoId(videoId)) return;
+    if (!(await validateVideoId(videoId))) {
+      alert('유효하지 않은 비디오 ID입니다.');
+      return;
+    }
 
     const response = await httpPost('music', { name: musicName, videoId });
 
