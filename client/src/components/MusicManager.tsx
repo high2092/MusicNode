@@ -41,6 +41,7 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom);
   const prevMusicNodeStack = usePrevMusicNodeStack();
   const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
+  const [hoveredMusicId, setHoveredMusicId] = useState<number>();
 
   const filteredMusicList = searchFilter.filter(Array.from(musicMap.values()), query);
 
@@ -50,6 +51,18 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
     if (isPlaying) youtubePlayerRef.current.playVideo();
     else youtubePlayerRef.current.pauseVideo();
   }, [isPlaying]);
+
+  useEffect(() => {
+    const resetHoveredMusic = () => {
+      setHoveredMusicId(null);
+    };
+
+    document.addEventListener('mouseover', resetHoveredMusic);
+
+    return () => {
+      document.removeEventListener('mouseover', resetHoveredMusic);
+    };
+  }, []);
 
   const handleMusicSubmit = async (formData: FieldValues) => {
     const { videoId } = formData;
@@ -160,6 +173,11 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
     setCurrentMusicInfo({ id: next, musicName, videoId });
   };
 
+  const handleMusicMouseOver = (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    setHoveredMusicId(id);
+  };
+
   return (
     <S.MusicManager>
       <div>
@@ -173,8 +191,8 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
         <S.MusicList>
           {filteredMusicList.map(({ id, name, videoId }) => {
             return (
-              <li key={`music-${id}`} onClick={_handleMusicClick(id)}>
-                <MusicComponent id={id} name={name} videoId={videoId} selected={selectedMusicId === id} />
+              <li key={`music-${id}`} onClick={_handleMusicClick(id)} onMouseOver={(e) => handleMusicMouseOver(e, id)}>
+                <MusicComponent id={id} name={name} videoId={videoId} selected={selectedMusicId === id} hovered={hoveredMusicId === id} />
               </li>
             );
           })}
