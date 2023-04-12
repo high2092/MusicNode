@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import mojac.musicnode.domain.Member;
 import mojac.musicnode.domain.Music;
+import mojac.musicnode.exception.NodeNotExistsException;
 import mojac.musicnode.service.MemberService;
 import mojac.musicnode.service.MusicService;
 import org.springframework.security.core.Authentication;
@@ -37,6 +38,17 @@ public class MusicController {
         Music music = new Music(request.getName(), request.getVideoId(), member);
         Long id = musicService.saveMusic(music);
         return new CreateMusicResponse(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteMusic(Authentication authentication, @PathVariable Long id) {
+        Long memberId = (Long) authentication.getPrincipal();
+        Member member = memberService.findOne(memberId).get();
+
+        Music music = musicService.findMusicOfMember(id, member);
+        if (music == null) throw new NodeNotExistsException();
+
+        musicService.deleteMusic(id);
     }
 
     @Getter

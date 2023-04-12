@@ -30,4 +30,13 @@ public class MusicService {
     public List<Music> findMusics(Member member) {
         return musicRepository.findAllByMember(member);
     }
+
+    public Music findMusicOfMember(Long id, Member member) {
+        return musicRepository.findByIdAndMember(id, member);
+    }
+
+    @Transactional
+    public void deleteMusic(Long id) {
+        musicRepository.deleteById(id);
+    }
 }

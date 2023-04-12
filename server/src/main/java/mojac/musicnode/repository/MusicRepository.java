@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface MusicRepository extends JpaRepository<Music, Long> {
 
+    Music findByIdAndMember(Long id, Member member);
     List<Music> findAllByMember(Member member);
 }
