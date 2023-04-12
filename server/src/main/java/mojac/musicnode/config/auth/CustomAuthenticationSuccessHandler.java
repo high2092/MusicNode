@@ -35,7 +35,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         log.info("oAuthId = {}", oAuthId);
 
-        Member member = memberRepository.findOneByOAuthId(oAuthId);
+        Member member = memberRepository.findByOauthId(oAuthId);
 
         ResponseCookie cookie = securityUtil.generateAccessTokenCookie(member.getId());
 

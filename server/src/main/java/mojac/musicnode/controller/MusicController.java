@@ -23,7 +23,7 @@ public class MusicController {
     @GetMapping
     public Result musics(Authentication authentication) {
         Long memberId = (Long) authentication.getPrincipal();
-        Member member = memberService.findOne(memberId);
+        Member member = memberService.findOne(memberId).get();
 
         return new Result(musicService.findMusics(member).stream().map(m -> new MusicDto(m)));
     }
@@ -32,7 +32,7 @@ public class MusicController {
     public CreateMusicResponse createMusic(Authentication authentication, @RequestBody @Valid CreateMusicRequest request) {
 
         Long memberId = (Long) authentication.getPrincipal();
-        Member member = memberService.findOne(memberId);
+        Member member = memberService.findOne(memberId).get();
 
         Music music = new Music(request.getName(), request.getVideoId(), member);
         Long id = musicService.saveMusic(music);

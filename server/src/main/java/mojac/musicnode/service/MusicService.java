@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +23,11 @@ public class MusicService {
         return music.getId();
     }
 
-    public Music findMusic(Long id) {
-        return musicRepository.findOne(id);
+    public Optional<Music> findMusic(Long id) {
+        return musicRepository.findById(id);
     }
 
     public List<Music> findMusics(Member member) {
-        return musicRepository.findAll(member);
+        return musicRepository.findAllByMember(member);
     }
 }

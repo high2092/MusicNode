@@ -55,7 +55,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
     @Transactional
     private Member saveOrUpdate(Long oauthId) {
-        Member member = memberRepository.findOneByOAuthId(oauthId);
+        Member member = memberRepository.findByOauthId(oauthId);
 
         if (member == null) throw new RuntimeException();
 

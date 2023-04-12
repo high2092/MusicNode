@@ -24,18 +24,18 @@ public class Member {
     private String password;
 
     @Column
-    private Long oauth_id;
+    private Long oauthId;
 
     @OneToMany(mappedBy = "member")
     private List<Thumbs> thumbs;
 
     protected Member() {}
 
-    public Member(String uid, String name, String cipher, Long oauth_id) {
+    public Member(String uid, String name, String cipher, Long oauthId) {
         this.uid = uid;
         this.name = name;
         this.password = cipher;
-        this.oauth_id = oauth_id;
+        this.oauthId = oauthId;
     }
 
     public void changeName(String name) {

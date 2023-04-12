@@ -25,7 +25,7 @@ public class PlaylistController {
     @GetMapping
     public List<Playlist> playlists(Authentication authentication) {
         Long memberId = (Long) authentication.getPrincipal();
-        Member member = memberService.findOne(memberId);
+        Member member = memberService.findOne(memberId).get();
 
         return playlistService.findAll(member);
     }
@@ -33,7 +33,7 @@ public class PlaylistController {
     @PostMapping
     public CreatePlaylistResponse createPlaylist(Authentication authentication, @RequestBody @Valid CreatePlaylistRequest request) {
         Long memberId = (Long) authentication.getPrincipal();
-        Member member = memberService.findOne(memberId);
+        Member member = memberService.findOne(memberId).get();
         Playlist playlist = new Playlist(request.getName(), request.getContents(), member);
         playlistService.save(playlist);
 

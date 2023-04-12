@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class MusicNodeService {
 
     @Transactional
     public void deleteMusicNode(MusicNode node) {
-        MusicNode prev = musicNodeRepository.findPrev(node);
+        MusicNode prev = musicNodeRepository.findByNext(node);
         if (prev != null) MusicNode.disconnect(prev);
         MusicNode.disconnect(node);
 
@@ -37,12 +38,12 @@ public class MusicNodeService {
         node.patch(next, color, position);
     }
 
-    public MusicNode findOne(Long id) {
-        return musicNodeRepository.findOne(id);
+    public Optional<MusicNode> findOne(Long id) {
+        return musicNodeRepository.findById(id);
     }
 
     public List<MusicNode> findAll(Member member) {
-        return musicNodeRepository.findAll(member);
+        return musicNodeRepository.findAll();
     }
 
     @Transactional

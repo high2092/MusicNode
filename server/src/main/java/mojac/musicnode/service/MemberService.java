@@ -10,6 +10,8 @@ import mojac.musicnode.util.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -34,7 +36,7 @@ public class MemberService {
     }
 
     public Long login(String uid, String password) {
-        Member member = memberRepository.findOneByUid(uid);
+        Member member = memberRepository.findByUid(uid);
 
         if (member != null && passwordEncoder.matches(password, member.getPassword())) {
             return member.getId();
@@ -44,14 +46,14 @@ public class MemberService {
     }
 
     private void validateUid(String uid) {
-        Member member = memberRepository.findOneByUid(uid);
+        Member member = memberRepository.findByUid(uid);
 
         if (member != null) {
             throw new DuplicateUidException();
         }
     }
 
-    public Member findOne(Long id) {
-        return memberRepository.findOne(id);
+    public Optional<Member> findOne(Long id) {
+        return memberRepository.findById(id);
     }
 }

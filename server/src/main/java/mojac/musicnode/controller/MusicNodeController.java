@@ -30,7 +30,7 @@ public class MusicNodeController {
 
     @GetMapping
     public Result getNodeList(Authentication authentication) {
-        Member member = memberService.findOne((Long) authentication.getPrincipal());
+        Member member = memberService.findOne((Long) authentication.getPrincipal()).get();
 
         log.info("member = {}", member);
         Stream<MusicNodeDto> musicNodeList = musicNodeService.findAll(member).stream().map(m -> new MusicNodeDto(m));
@@ -40,13 +40,13 @@ public class MusicNodeController {
 
     @GetMapping("/{id}")
     public MusicNodeDto getNode(@PathVariable Long id) {
-        MusicNode node = musicNodeService.findOne(id);
+        MusicNode node = musicNodeService.findOne(id).get();
         return new MusicNodeDto(node);
     }
 
     @PostMapping
     public CreateNodeResponse createNode(@RequestBody @Valid CreateNodeRequest request) {
-        Music music = musicService.findMusic(request.getMusicId());
+        Music music = musicService.findMusic(request.getMusicId()).get();
         MusicNode node = new MusicNode(music);
         log.info("NODE = {}", node.getMusicInfo().getName());
 
@@ -58,7 +58,7 @@ public class MusicNodeController {
     public CreateNodeSimpleResponse createNodeSimple(Authentication authentication, @RequestBody CreateNodeSimpleRequest request) {
 
         Long memberId = (Long) authentication.getPrincipal();
-        Member member = memberService.findOne(memberId);
+        Member member = memberService.findOne(memberId).get();
 
         Music music = new Music(request.getMusicName(), request.getVideoId(), member);
         Long musicId = musicService.saveMusic(music);
@@ -70,7 +70,7 @@ public class MusicNodeController {
 
     @PostMapping("/{id}/disconnect")
     public DisconnectNodeResponse disconnectNode(@PathVariable Long id) {
-        MusicNode source = musicNodeService.findOne(id);
+        MusicNode source = musicNodeService.findOne(id).get();
         Long targetId = source.getNext().getId();
 
         musicNodeService.disconnect(source);
@@ -81,11 +81,11 @@ public class MusicNodeController {
     @PatchMapping("/{id}")
     @JsonInclude
     public PatchNodeResponse patchNode(@PathVariable Long id, @RequestBody PatchNodeRequest request) {
-        MusicNode node = musicNodeService.findOne(id);
+        MusicNode node = musicNodeService.findOne(id).get();
         Long nextId = request.getNext();
         MusicNode next;
         if (nextId != null) {
-            next = musicNodeService.findOne(request.getNext());
+            next = musicNodeService.findOne(request.getNext()).get();
         } else {
             next = null;
         }
@@ -98,7 +98,7 @@ public class MusicNodeController {
 
     @DeleteMapping("/{id}")
     public DeleteNodeResponse deleteNode(@PathVariable Long id) {
-        MusicNode node = musicNodeService.findOne(id);
+        MusicNode node = musicNodeService.findOne(id).get();
         musicNodeService.deleteMusicNode(node);
 
         return new DeleteNodeResponse(id);
@@ -106,7 +106,7 @@ public class MusicNodeController {
 
     @GetMapping("/{id}/next")
     public GetNextNodeResponse getNextNode(@PathVariable Long id) {
-        MusicNode node = musicNodeService.findOne(id);
+        MusicNode node = musicNodeService.findOne(id).get();
 
         if (node.getNext() == null) throw new NextNodeNotExistsException();
 
