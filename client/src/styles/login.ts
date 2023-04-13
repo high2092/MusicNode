@@ -5,18 +5,17 @@ export const LoginPage = styled.div`
   height: 97vh;
 
   display: flex;
-  flex-direction: column;
-
-  /* justify-content: center; */
+  justify-content: center;
   align-items: center;
 `;
 
-export const LogoText = styled.div`
-  font-size: 2rem;
+export const LoginFormContainer = styled.div`
+  margin-top: -10%;
 
-  margin-top: 15%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
-
 export const LoginForm = styled.form`
   width: max-content;
 
