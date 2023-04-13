@@ -112,6 +112,17 @@ public class MusicNodeController {
         return new GetNextNodeResponse(node.getNext().getId());
     }
 
+    @PostMapping("/move")
+    public MoveNodesResponse moveNodes(@RequestBody @Valid MoveNodesRequest request) {
+        List<MoveNodesRequest.NodeMove> nodeMoves = request.getNodeMoves();
+        nodeMoves.stream().forEach(nodeMove ->
+                musicNodeService.findOne(nodeMove.getId())
+                    .ifPresent(node -> musicNodeService.moveNode(node, nodeMove.getPosition()))
+        );
+
+        return new MoveNodesResponse(nodeMoves.size());
+    }
+
     @Getter
     @AllArgsConstructor
     static class Result<T> {
@@ -146,6 +157,18 @@ public class MusicNodeController {
     static class DeleteNodesRequest {
         @NotNull
         private List<Long> nodes;
+    }
+
+    @Getter
+    static class MoveNodesRequest {
+        @NotNull
+        private List<NodeMove> nodeMoves;
+
+        @Getter
+        static class NodeMove {
+            private Long id;
+            private Position position;
+        }
     }
 
     @Getter
@@ -198,6 +221,13 @@ public class MusicNodeController {
         private String color;
         private Position position;
     }
+
+    @Getter
+    @AllArgsConstructor
+    static class MoveNodesResponse {
+        private int count;
+    }
+
 
     @Getter
     @AllArgsConstructor

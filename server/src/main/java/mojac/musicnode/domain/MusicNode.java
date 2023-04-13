@@ -56,4 +56,8 @@ public class MusicNode {
     public static void disconnect(MusicNode source) {
         source.next = null;
     }
+
+    public void move(Position position) {
+        this.position = position;
+    }
 }

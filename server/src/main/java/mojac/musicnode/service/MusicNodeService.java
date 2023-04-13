@@ -57,4 +57,9 @@ public class MusicNodeService {
     public void connect(MusicNode source, MusicNode target) {
         MusicNode.connect(source, target);
     }
+
+    @Transactional
+    public void moveNode(MusicNode node, Position position) {
+        node.move(position);
+    }
 }
