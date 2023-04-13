@@ -2,7 +2,7 @@
 
 ## 스크린샷
 
-추가 예정
+<img width="1440" alt="스크린샷 2023-04-14 오전 5 45 07" src="https://user-images.githubusercontent.com/55306894/231879664-cb440d2e-adbf-4676-8001-06b7dffd6d77.png">
 
 ## 실행 방법
 
