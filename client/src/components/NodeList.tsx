@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import * as S from './styles/NodeList';
-import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType, Edge, NodeChange, EdgeChange, NodePositionChange } from 'reactflow';
+import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType, Edge, NodeChange, EdgeChange, NodePositionChange, MiniMap } from 'reactflow';
 import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
 import { createPlaylistByHead, httpDelete, httpPatch, httpPost, validateVideoId } from '../utils/common';
@@ -27,9 +27,10 @@ interface NodeListProps {
   setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
   onNodesChange: (nodesChange: NodeChange[]) => void;
   onEdgesChange: (edgesChange: EdgeChange[]) => void;
+  showMiniMap: boolean;
 }
 
-export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }: NodeListProps) => {
+export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, showMiniMap }: NodeListProps) => {
   const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
   const [musicNodeMap, setMusicNodeMap] = useRecoilState(musicNodeMapAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
@@ -230,7 +231,9 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         onContextMenu={(e) => e.preventDefault()}
-      />
+      >
+        {showMiniMap && <MiniMap zoomable pannable />}
+      </ReactFlow>
     </S.NodeList>
   );
 };

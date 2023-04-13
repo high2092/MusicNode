@@ -16,6 +16,7 @@ import type { AxiosResponse } from 'axios';
 import { PlaylistModal } from '../components/PlaylistModal';
 import { MusicInfo } from '../domain/MusicInfo';
 import { PlaylistSubmitForm } from '../components/PlaylistSubmitForm';
+import * as S from '../styles/index';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -36,6 +37,8 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const { nodes: initialNodes, edges: initialEdges } = convertMusicNodeToReactFlowObject(initialMusicNodeMap);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+  const [showMiniMap, setShowMiniMap] = useState(true);
 
   let youtubePlayerRef = useRef<YouTubePlayer>();
 
@@ -107,12 +110,15 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
     <div>
       <div>
         <div>노드 목록</div>
-        <NodeList nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} />
-        <form onSubmit={handleSubmit(handleCreateMusicNode)}>
-          <label>MUSIC NAME</label>
-          <input ref={musicNameRef} disabled />
-          <button>노드 생성하기</button>
-        </form>
+        <NodeList nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} showMiniMap={showMiniMap} />
+        <S.ReactFlowOption>
+          <form onSubmit={handleSubmit(handleCreateMusicNode)}>
+            <label>MUSIC NAME</label>
+            <input ref={musicNameRef} disabled />
+            <button>노드 생성하기</button>
+          </form>
+          <button onClick={() => setShowMiniMap(!showMiniMap)}>{`미니맵 ${showMiniMap ? '끄기' : '켜기'}`}</button>
+        </S.ReactFlowOption>
       </div>
       <hr />
       <div>

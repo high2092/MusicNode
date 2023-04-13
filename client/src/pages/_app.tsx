@@ -1,6 +1,6 @@
 import { RecoilRoot } from 'recoil';
 
-import '../styles/index.css';
+import '../static/index.css';
 
 const App = ({ Component, pageProps }) => {
   return (
