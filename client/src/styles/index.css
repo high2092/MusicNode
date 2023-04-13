@@ -3,4 +3,5 @@
 * {
   font-family: 'Poor Story', cursive;
   font-weight: 500;
+  user-select: none;
 }
