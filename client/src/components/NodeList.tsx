@@ -38,7 +38,6 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   const [clickEventPosition, setClickEventPosition] = useRecoilState(clickEventPositionAtom);
   const [playlist, setPlaylist] = useRecoilState(selectedPlaylistAtom);
   const [reactFlowInstance, setReactFlowInstance] = useRecoilState(reactFlowInstanceAtom);
-  const nodesChangeRef = useRef<NodePositionChange[]>();
 
   const selectedObjectRef = useRef<SelectedObject>(new SelectedObject());
 
@@ -128,26 +127,29 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     selectedObjectRef.current = new SelectedObject();
   };
 
-  const handleNodeDragStop = async () => {
-    const nodesChange = nodesChangeRef.current;
-    const nodeMoves = nodesChange.map((nodeChange) => {
-      const { id, position } = nodes.find((node) => node.id === nodeChange.id);
-      return { id: Number(id), position };
-    });
-
-    const response = await httpPost('node/move', {
-      nodeMoves,
-    });
-
-    if (!response.ok) {
-      console.error(response.statusText);
-      return;
-    }
-  };
+  const timeoutRef = useRef<NodeJS.Timeout>();
 
   const _onNodesChange = (nodesChange: NodePositionChange[]) => {
-    nodesChangeRef.current = nodesChange;
     onNodesChange(nodesChange);
+
+    const CHANGE_STOP_CRITERIA_MILLI = 700;
+
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(async () => {
+      const nodeMoves = nodesChange.map((nodeChange) => {
+        const { id, position } = nodes.find((node) => node.id === nodeChange.id);
+        return { id: Number(id), position };
+      });
+
+      const response = await httpPost('node/move', {
+        nodeMoves,
+      });
+
+      if (!response.ok) {
+        console.error(response.statusText);
+        return;
+      }
+    }, CHANGE_STOP_CRITERIA_MILLI);
   };
 
   const handleDragOver = (event) => {
@@ -215,7 +217,6 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodeDragStop={handleNodeDragStop}
         onNodesChange={_onNodesChange}
         onEdgesChange={onEdgesChange}
         onEdgeUpdate={handleEdgeUpdate}
