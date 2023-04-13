@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { axiosHttpGet, httpPost } from '../utils/common';
+import { axiosHttpGet, httpGet, httpPost } from '../utils/common';
 import { FieldValues, useForm } from 'react-hook-form';
 import { NodeList } from '../components/NodeList';
 import { MusicManager } from '../components/MusicManager';
@@ -17,6 +17,7 @@ import { PlaylistModal } from '../components/PlaylistModal';
 import { MusicInfo } from '../domain/MusicInfo';
 import { PlaylistSubmitForm } from '../components/PlaylistSubmitForm';
 import * as S from '../styles/index';
+import { useRouter } from 'next/router';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -37,10 +38,20 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const { nodes: initialNodes, edges: initialEdges } = convertMusicNodeToReactFlowObject(initialMusicNodeMap);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
   const [showMiniMap, setShowMiniMap] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
 
   let youtubePlayerRef = useRef<YouTubePlayer>();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    (async function foo() {
+      const response = await httpGet('auth/login-info');
+      if (!response.ok) router.replace('/login');
+      else setIsLoggedIn(true);
+    })();
+  }, []);
 
   useEffect(() => {
     setMusicMap(initialMusicMap);
@@ -106,9 +117,18 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
     }
   };
 
+  const handleLogoutButtonClick = async () => {
+    // 로그아웃
+    const response = await httpPost('auth/logout');
+    if (response.ok) router.replace('/login');
+  };
+
+  if (!isLoggedIn) return <></>;
+
   return (
     <div>
       <div>
+        <S.LogoutButton onClick={handleLogoutButtonClick}>로그아웃</S.LogoutButton>
         <div>노드 목록</div>
         <NodeList nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} showMiniMap={showMiniMap} />
         <S.ReactFlowOption>

@@ -9,13 +9,7 @@ const LoginPage = () => {
   const handleLogin = async (formData: FieldValues) => {
     const response = await httpPost('auth/login', formData);
 
-    console.log(response);
-
-    if (response.ok) {
-      const { id } = await response.json();
-      alert(`your id = ${id}`);
-      router.push('/');
-    }
+    if (response.ok) router.push('/');
   };
 
   return (
