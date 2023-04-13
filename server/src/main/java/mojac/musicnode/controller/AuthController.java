@@ -1,5 +1,6 @@
 package mojac.musicnode.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -56,6 +57,19 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, responseCookie.toString())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new MemberLoginResponse(memberId));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        Cookie resetCookie = new Cookie("MN_TOKEN", null); // TODO: 상수화
+        resetCookie.setMaxAge(0);
+        resetCookie.setPath("/");
+        response.addCookie(resetCookie);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, resetCookie.toString())
+                .build();
     }
 
     @Getter

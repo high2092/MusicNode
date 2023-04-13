@@ -58,6 +58,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 } catch (ExpiredJwtException e) {
                     Cookie resetCookie = new Cookie(JWT_COOKIE_KEY, null);
                     resetCookie.setMaxAge(0);
+                    resetCookie.setPath("/");
                     response.addCookie(resetCookie);
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 }
