@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import * as S from './styles/NodeList';
-import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType, Edge } from 'reactflow';
+import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType, Edge, NodeChange, EdgeChange, NodePositionChange } from 'reactflow';
 import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
 import { createPlaylistByHead, httpDelete, httpPatch, httpPost, validateVideoId } from '../utils/common';
 import { DragTransferTypes, ReactFlowObjectTypes, convertClassListStringToReactFlowType, convertMusicNodeToReactFlowObject, createArrowEdge } from '../utils/ReactFlow';
 import { useRecoilState } from 'recoil';
-
 import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
 import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, reactFlowInstanceAtom, selectedPlaylistAtom } from '../store';
@@ -21,7 +20,16 @@ class SelectedObject {
 
 type ReactFlowObjectType = typeof ReactFlowObjectTypes[keyof typeof ReactFlowObjectTypes];
 
-export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }) => {
+interface NodeListProps {
+  nodes: Node[];
+  edges: Edge[];
+  setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+  onNodesChange: (nodesChange: NodeChange[]) => void;
+  onEdgesChange: (edgesChange: EdgeChange[]) => void;
+}
+
+export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange }: NodeListProps) => {
   const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
   const [musicNodeMap, setMusicNodeMap] = useRecoilState(musicNodeMapAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
@@ -30,6 +38,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   const [clickEventPosition, setClickEventPosition] = useRecoilState(clickEventPositionAtom);
   const [playlist, setPlaylist] = useRecoilState(selectedPlaylistAtom);
   const [reactFlowInstance, setReactFlowInstance] = useRecoilState(reactFlowInstanceAtom);
+  const nodesChangeRef = useRef<NodePositionChange[]>();
 
   const selectedObjectRef = useRef<SelectedObject>(new SelectedObject());
 
@@ -121,15 +130,26 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     selectedObjectRef.current = new SelectedObject();
   };
 
-  const handleNodeDragStop = async (e, { id, position }) => {
-    id = Number(id);
-    const response = await httpPatch(`node/${id}`, { position });
-    if (!response.ok) {
-      console.log('patch failed');
-    }
-    const node = musicNodeMap.get(id);
+  const handleNodeDragStop = async () => {
+    const nodesChange = nodesChangeRef.current;
+    const nodeMoves = nodesChange.map((nodeChange) => {
+      const { id, position } = nodes.find((node) => node.id === nodeChange.id);
+      return { id: Number(id), position };
+    });
 
-    setMusicNodeMap(musicNodeMap.set(id, { ...node, position }));
+    const response = await httpPost('node/move', {
+      nodeMoves,
+    });
+
+    if (!response.ok) {
+      console.error(response.statusText);
+      return;
+    }
+  };
+
+  const _onNodesChange = (nodesChange: NodePositionChange[]) => {
+    nodesChangeRef.current = nodesChange;
+    onNodesChange(nodesChange);
   };
 
   const handleDragOver = (event) => {
@@ -198,7 +218,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         nodes={nodes}
         edges={edges}
         onNodeDragStop={handleNodeDragStop}
-        onNodesChange={onNodesChange}
+        onNodesChange={_onNodesChange}
         onEdgesChange={onEdgesChange}
         onEdgeUpdate={handleEdgeUpdate}
         onConnect={onConnect}
