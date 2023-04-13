@@ -25,7 +25,7 @@ public class AuthController {
     private final MemberService memberService;
     private final SecurityUtil securityUtil;
 
-    @GetMapping("/login/oauth2/kakao")
+    @GetMapping("/login/kakao")
     public void oauthLogin(HttpServletResponse response) throws IOException {
         response.sendRedirect("/oauth2/authorization/kakao");
     }

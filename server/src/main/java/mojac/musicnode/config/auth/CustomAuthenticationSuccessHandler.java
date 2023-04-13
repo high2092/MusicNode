@@ -39,8 +39,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         ResponseCookie cookie = securityUtil.generateAccessTokenCookie(member.getId());
 
+        response.setHeader(HttpHeaders.LOCATION, "http://localhost:3000"); // TODO: 상수화
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.FOUND.value());
+
     }
 
 }
