@@ -90,9 +90,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
    * deprecated
    * 더블클릭으로 대체
    */
-  const handleNodeClick = (e: React.MouseEvent, node: Node) => {
-    e.stopPropagation();
-
+  const handleNodeContextMenu = (e: React.MouseEvent, node: Node) => {
     setPlaylist(createPlaylistByHead(Number(node.id), musicNodeMap));
 
     setClickEventPosition({
@@ -222,7 +220,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         onEdgesChange={onEdgesChange}
         onEdgeUpdate={handleEdgeUpdate}
         onConnect={onConnect}
-        onNodeClick={handleNodeClick}
+        onNodeContextMenu={handleNodeContextMenu}
         onNodeDoubleClick={handleNodeDoubleClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
         onInit={setReactFlowInstance}
@@ -230,6 +228,7 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         onEdgesDelete={handleEdgesDelete}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
+        onContextMenu={(e) => e.preventDefault()}
       />
     </S.NodeList>
   );
