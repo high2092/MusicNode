@@ -25,12 +25,19 @@ public class MusicNodeService {
     }
 
     @Transactional
-    public void deleteMusicNode(MusicNode node) {
-        MusicNode prev = musicNodeRepository.findByNext(node);
-        if (prev != null) MusicNode.disconnect(prev);
-        MusicNode.disconnect(node);
+    public void deleteMusicNodes(List<Long> nodes) {
+        nodes.stream()
+                .map(id -> musicNodeRepository.findById(id).get()) // 예외는 말그대로 예외
+                .forEach(node -> {
+                    musicNodeRepository.nullifyPrevNext(node);
+                    musicNodeRepository.delete(node);
+                });
+    }
 
-        musicNodeRepository.delete(node);
+    @Transactional
+    public void disconnectWithPrevNodes(Long id) {
+        MusicNode node = musicNodeRepository.findById(id).get();
+        musicNodeRepository.nullifyPrevNext(node);
     }
 
     @Transactional
@@ -49,10 +56,5 @@ public class MusicNodeService {
     @Transactional
     public void connect(MusicNode source, MusicNode target) {
         MusicNode.connect(source, target);
-    }
-
-    @Transactional
-    public void disconnect(MusicNode source) {
-        MusicNode.disconnect(source);
     }
 }

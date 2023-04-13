@@ -16,6 +16,7 @@ import mojac.musicnode.service.MusicService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -68,14 +69,12 @@ public class MusicNodeController {
         return new CreateNodeSimpleResponse(musicId, nodeId);
     }
 
-    @PostMapping("/{id}/disconnect")
-    public DisconnectNodeResponse disconnectNode(@PathVariable Long id) {
-        MusicNode source = musicNodeService.findOne(id).get();
-        Long targetId = source.getNext().getId();
+    @PostMapping("/disconnect")
+    public DisconnectNodesResponse disconnectNodes(@RequestBody @Valid DisconnectNodesRequest request) {
+        List<Long> targets = request.getTargets();
+        targets.stream().distinct().forEach(musicNodeService::disconnectWithPrevNodes);
 
-        musicNodeService.disconnect(source);
-
-        return new DisconnectNodeResponse(id, targetId);
+        return new DisconnectNodesResponse(targets.size());
     }
 
     @PatchMapping("/{id}")
@@ -96,12 +95,12 @@ public class MusicNodeController {
         return new PatchNodeResponse(id, nextId, color, position);
     }
 
-    @DeleteMapping("/{id}")
-    public DeleteNodeResponse deleteNode(@PathVariable Long id) {
-        MusicNode node = musicNodeService.findOne(id).get();
-        musicNodeService.deleteMusicNode(node);
+    @PostMapping("/delete")
+    public DeleteNodesResponse deleteNodes(@RequestBody @Valid DeleteNodesRequest request) {
+        List<Long> nodes = request.getNodes();
+        musicNodeService.deleteMusicNodes(nodes);
 
-        return new DeleteNodeResponse(id);
+        return new DeleteNodesResponse(nodes.size());
     }
 
     @GetMapping("/{id}/next")
@@ -138,6 +137,18 @@ public class MusicNodeController {
     }
 
     @Getter
+    static class DisconnectNodesRequest {
+        @NotNull
+        private List<Long> targets;
+    }
+
+    @Getter
+    static class DeleteNodesRequest {
+        @NotNull
+        private List<Long> nodes;
+    }
+
+    @Getter
     @AllArgsConstructor
     static class CreateNodeResponse {
         private Long id;
@@ -156,15 +167,14 @@ public class MusicNodeController {
 
     @Getter
     @AllArgsConstructor
-    static class DisconnectNodeResponse {
-        private Long source;
-        private Long target;
+    static class DisconnectNodesResponse {
+        private int count;
     }
 
     @Getter
     @AllArgsConstructor
-    static class DeleteNodeResponse {
-        private Long id;
+    static class DeleteNodesResponse {
+        private int count;
     }
 
     @Getter
