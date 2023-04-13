@@ -41,7 +41,10 @@ public class SecurityUtil {
     }
 
     public ResponseCookie generateAccessTokenCookie(Long memberId) {
-        String jwt = createJwt(memberId.toString(), null, null);
+        Long 분 = 60 * 1000L;
+        Long 시간 = 60 * 분;
+        Long expiration = 12 * 시간;
+        String jwt = createJwt(memberId.toString(), expiration, null);
         return ResponseCookie.from("MN_TOKEN", jwt)
                 .httpOnly(true)
                 .path("/")

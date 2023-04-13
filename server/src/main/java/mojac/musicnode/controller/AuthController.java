@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mojac.musicnode.config.auth.SecurityUtil;
+import mojac.musicnode.exception.NotAuthenticatedException;
 import mojac.musicnode.service.MemberService;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
@@ -29,10 +30,10 @@ public class AuthController {
     }
 
     @GetMapping("/login-info")
-    public String getLoginInfo(Authentication authentication) {
-        Object userId = authentication.getPrincipal();
-
-        return userId.toString();
+    public GetLoginInfoResponse getLoginInfo(Authentication authentication) {
+        if (authentication == null) throw new NotAuthenticatedException();
+        Long memberId = (Long) authentication.getPrincipal();
+        return new GetLoginInfoResponse(memberId);
     }
 
     @PostMapping("/register")
@@ -63,6 +64,12 @@ public class AuthController {
         @NotEmpty private String uid;
         @NotEmpty private String name;
         @NotEmpty private String password;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    static class GetLoginInfoResponse {
+        private Long id;
     }
 
     @Getter
