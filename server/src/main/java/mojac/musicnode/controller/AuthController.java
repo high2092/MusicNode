@@ -2,6 +2,7 @@ package mojac.musicnode.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public MemberRegisterResponse register(@RequestBody MemberRegisterRequest request) {
+    public MemberRegisterResponse register(@RequestBody @Valid MemberRegisterRequest request) {
         Long memberId = memberService.join(request.getUid(), request.getName(), request.getPassword(), null);
 
         return new MemberRegisterResponse(memberId);
