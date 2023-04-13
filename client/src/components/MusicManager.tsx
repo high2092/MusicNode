@@ -9,7 +9,6 @@ import { currentMusicNodeInfoAtom, isPlayingAtom, musicMapAtom } from '../store'
 import YouTube, { YouTubePlayer } from 'react-youtube';
 import { usePrevMusicNodeStack } from './hooks/usePrevMusicNodeStack';
 import { Music } from '../domain/Music';
-import { API_KEY } from '../constants';
 
 class SearchFilter {
   trim(value: string) {
@@ -85,13 +84,13 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
 
     searchButtonRef.current.disabled = true;
 
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?q=${encodeURIComponent(musicName)}&type=video&part=snippet&key=${API_KEY}`, {
-      method: 'GET',
-    });
-
     setTimeout(() => {
       searchButtonRef.current.disabled = false;
     }, 1000);
+
+    const response = await fetch(`/api/search-youtube?musicName=${musicName}`, {
+      method: 'GET',
+    });
 
     if (!response.ok) {
       console.log(response.statusText);

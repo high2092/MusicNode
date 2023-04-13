@@ -1,5 +1,5 @@
 import { FieldValues } from 'react-hook-form';
-import { ALGORITHM, API_HOST, IV, SECRET_KEY } from '../constants';
+import { API_HOST } from '../constants';
 import axios from 'axios';
 import { MusicInfo } from '../domain/MusicInfo';
 import crypto from 'crypto';
@@ -99,12 +99,6 @@ export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMus
   }
 
   return { contents };
-};
-
-const encodeV1 = (plain: string) => {
-  // 테스트용
-  const cipher = crypto.createCipheriv(ALGORITHM, Buffer.from(SECRET_KEY, 'hex'), Buffer.from(IV, 'hex'));
-  return cipher.update(plain, 'utf8', 'hex') + cipher.final('hex');
 };
 
 export const encodeV2 = (plain: string) => {
