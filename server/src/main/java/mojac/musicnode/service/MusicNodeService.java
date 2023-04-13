@@ -50,7 +50,7 @@ public class MusicNodeService {
     }
 
     public List<MusicNode> findAll(Member member) {
-        return musicNodeRepository.findAll();
+        return musicNodeRepository.findAllByMember(member);
     }
 
     @Transactional
