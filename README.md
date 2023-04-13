@@ -77,7 +77,7 @@ yarn start
 
 ### 어댑터
 
-- 별도 실행 없이 간단하게 사용할 수 있는 재생 전용 페이지입니다.
+- 별도 실행 없이 간단하게 사용할 수 있는 [재생 전용 페이지](https://music-node-playlist-adapter.vercel.app/v2eJyrVspLzE1VslJ63NoOR0o6Ssn5eSWpeSXFSlbR1TAlrze3vF614vW8GQpvp255vbkBqKwsMyU13zMFKGnuZhIYbOofnuNuAdJemZwD0pKRmpiiVKuDMKJ1x5uuJW%2Bbl7xZ3vBm2hYUE9J9QiKSQ%2FN0A52SlWpjawGvZT8U)입니다.
 - 로컬 스토리지를 활용해 플레이리스트들을 저장하고 불러올 수 있습니다.
 
 ## 인터페이스 소개
