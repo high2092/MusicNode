@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import * as S from './styles/NodeList';
-import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType } from 'reactflow';
+import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType, Edge } from 'reactflow';
 import type { Node } from 'reactflow';
 import { useRouter } from 'next/router';
 import { createPlaylistByHead, httpDelete, httpPatch, httpPost, validateVideoId } from '../utils/common';
@@ -102,18 +102,19 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     };
   };
 
-  const handleEdgesDelete = async (edges) => {
-    const [edge] = edges;
-
-    const response = await httpPost(`node/${edge.source}/disconnect`, {});
+  const handleEdgesDelete = async (edges: Edge[]) => {
+    const response = await httpPost(`node/disconnect`, {
+      targets: edges.map((edge) => Number(edge.target)),
+    });
     if (!response.ok) {
-      setEdges((edges) => {
-        return edges.concat(edge);
+      setEdges((eds) => {
+        return [...eds, ...edges];
       });
     } else {
       setMusicNodeMap((musicMap) => {
-        const node = musicMap.get(Number(edge.source));
-        return musicMap.set(node.id, { ...node, next: null });
+        const newMusicMap = new Map(musicMap);
+        edges.forEach((edge) => (newMusicMap.get(Number(edge.source)).next = null));
+        return newMusicMap;
       });
     }
 
@@ -129,25 +130,6 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     const node = musicNodeMap.get(id);
 
     setMusicNodeMap(musicNodeMap.set(id, { ...node, position }));
-  };
-
-  const handleReactFlowKeyDown = async ({ key }) => {
-    if (key === 'Backspace') {
-      const { id, type } = selectedObjectRef.current;
-      console.log(id, type);
-      switch (type) {
-        case ReactFlowObjectTypes.NODE: {
-          const response = await httpDelete(`node/${id}`);
-          if (response.ok) {
-            setMusicNodeMap((musicNodeMap) => {
-              musicNodeMap.delete(Number(id));
-              return musicNodeMap;
-            });
-          }
-          break;
-        }
-      }
-    }
   };
 
   const handleDragOver = (event) => {
@@ -197,6 +179,19 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     }
   };
 
+  const handleNodesDelete = async (nodes: Node[]) => {
+    const response = await httpPost('node/delete', {
+      nodes: nodes.map((node) => Number(node.id)),
+    });
+
+    if (!response.ok) {
+      console.error(response.statusText);
+      return;
+    }
+
+    const { count } = await response.json();
+  };
+
   return (
     <S.NodeList>
       <ReactFlow
@@ -211,9 +206,8 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
         onNodeDoubleClick={handleNodeDoubleClick}
         onMouseDownCapture={handleReactFlowMouseDownCapture}
         onInit={setReactFlowInstance}
-        // onNodesDelete={handleNodesDelete} // NodeDragStop 이벤트 및 nodes 상태 관리 관련 문제로 동작 X
+        onNodesDelete={handleNodesDelete}
         onEdgesDelete={handleEdgesDelete}
-        onKeyDown={handleReactFlowKeyDown}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       />
