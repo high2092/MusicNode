@@ -75,7 +75,7 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
 
     if (response.ok) {
       const { id } = await response.json();
-      setMusicMap(musicMap.set(id, new Music({ id, name: musicName, videoId })));
+      setMusicMap((musicMap) => new Map(musicMap.set(id, new Music({ id, name: musicName, videoId }))));
     }
   };
 
