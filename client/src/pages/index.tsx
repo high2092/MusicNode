@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { axiosHttpGet, httpGet, httpPost } from '../utils/common';
 import { FieldValues, useForm } from 'react-hook-form';
-import { NodeList } from '../components/NodeList';
+import { NodeManager } from '../components/NodeManager';
 import { MusicManager } from '../components/MusicManager';
 import { Position } from '../domain/Position';
 import { MusicNode } from '../domain/MusicNode';
@@ -121,28 +121,24 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
 
   return (
     <div>
-      <div>
-        <S.TopBarRight>
-          <Link href={'/playlist'} style={{ textDecoration: 'none' }}>
-            <S.PlaylistAnchor>플레이리스트로</S.PlaylistAnchor>
-          </Link>
-          <S.LogoutButton onClick={handleLogoutButtonClick}>로그아웃</S.LogoutButton>
-        </S.TopBarRight>
-        <div>노드 목록</div>
-        <NodeList nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} showMiniMap={showMiniMap} />
-        <S.ReactFlowOption>
-          <form onSubmit={handleSubmit(handleCreateMusicNode)}>
-            <label>MUSIC NAME</label>
-            <input ref={musicNameRef} disabled />
-            <button>노드 생성하기</button>
-          </form>
-          <button onClick={() => setShowMiniMap(!showMiniMap)}>{`미니맵 ${showMiniMap ? '끄기' : '켜기'}`}</button>
-        </S.ReactFlowOption>
-      </div>
+      <S.TopBarRight>
+        <Link href={'/playlist'} style={{ textDecoration: 'none' }}>
+          <S.PlaylistAnchor>플레이리스트로</S.PlaylistAnchor>
+        </Link>
+        <S.LogoutButton onClick={handleLogoutButtonClick}>로그아웃</S.LogoutButton>
+      </S.TopBarRight>
+      <div>노드 목록</div>
+      <NodeManager nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} showMiniMap={showMiniMap} />
+      <S.ReactFlowOption>
+        <form onSubmit={handleSubmit(handleCreateMusicNode)}>
+          <label>MUSIC NAME</label>
+          <input ref={musicNameRef} disabled />
+          <button>노드 생성하기</button>
+        </form>
+        <button onClick={() => setShowMiniMap(!showMiniMap)}>{`미니맵 ${showMiniMap ? '끄기' : '켜기'}`}</button>
+      </S.ReactFlowOption>
       <hr />
-      <div>
-        <MusicManager />
-      </div>
+      <MusicManager />
       {isVisiblePlaylistModal && <PlaylistModal BottomElement={<PlaylistSubmitForm />} />}
     </div>
   );

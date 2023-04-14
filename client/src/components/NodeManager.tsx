@@ -1,17 +1,14 @@
-import { useCallback, useEffect, useRef } from 'react';
-import * as S from './styles/NodeList';
-import ReactFlow, { useNodesState, useEdgesState, addEdge, MarkerType, Edge, NodeChange, EdgeChange, NodePositionChange, MiniMap } from 'reactflow';
-import type { Node } from 'reactflow';
-import { useRouter } from 'next/router';
-import { createPlaylistByHead, httpDelete, httpPatch, httpPost, validateVideoId } from '../utils/common';
-import { DragTransferTypes, ReactFlowObjectTypes, convertClassListStringToReactFlowType, convertMusicNodeToReactFlowObject, createArrowEdge } from '../utils/ReactFlow';
+import { useCallback, useRef } from 'react';
+import ReactFlow, { Node, Edge, NodeChange, EdgeChange, NodePositionChange, MiniMap } from 'reactflow';
+import { createPlaylistByHead, httpPatch, httpPost, validateVideoId } from '../utils/common';
+import { DragTransferTypes, ReactFlowObjectTypes, convertClassListStringToReactFlowType, createArrowEdge } from '../utils/ReactFlow';
 import { useRecoilState } from 'recoil';
-import 'reactflow/dist/style.css';
 import { MusicNode } from '../domain/MusicNode';
 import { clickEventPositionAtom, currentMusicNodeInfoAtom, isPlayingAtom, isVisiblePlaylistModalAtom, musicMapAtom, musicNodeMapAtom, reactFlowInstanceAtom, selectedPlaylistAtom } from '../store';
 import { ReactFlowNode } from '../domain/ReactFlowNode';
-import { Position } from '../domain/Position';
 import { Music } from '../domain/Music';
+
+import 'reactflow/dist/style.css';
 
 class SelectedObject {
   id: string;
@@ -30,7 +27,7 @@ interface NodeListProps {
   showMiniMap: boolean;
 }
 
-export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, showMiniMap }: NodeListProps) => {
+export const NodeManager = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEdgesChange, showMiniMap }: NodeListProps) => {
   const [musicMap, setMusicMap] = useRecoilState(musicMapAtom);
   const [musicNodeMap, setMusicNodeMap] = useRecoilState(musicNodeMapAtom);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingAtom); // TODO: replace with selector
@@ -78,18 +75,11 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     [setEdges]
   );
 
-  // const handleNodeDoubleClick = (e: React.MouseEvent, node: Node) => {
-  //   window.open(`/music-node/${node.id}`);
-  // };
   const handleNodeDoubleClick = (e: React.MouseEvent, node: ReactFlowNode) => {
     setCurrentMusicInfo(node);
     setIsPlaying(true);
   };
 
-  /**
-   * deprecated
-   * 더블클릭으로 대체
-   */
   const handleNodeContextMenu = (e: React.MouseEvent, node: Node) => {
     setPlaylist(createPlaylistByHead(Number(node.id), musicNodeMap));
 
@@ -101,7 +91,6 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
     setIsVisiblePlaylistModal(true);
   };
 
-  // ReactFlow 컴포넌트에 onNodeMouseDown 속성이 있었다면 더 좋았을텐데 아쉽다
   const handleReactFlowMouseDownCapture = ({ target }) => {
     selectedObjectRef.current = {
       id: target.dataset.id,
@@ -129,7 +118,6 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
   };
 
   const timeoutRef = useRef<NodeJS.Timeout>();
-
   const _onNodesChange = (nodesChange: NodePositionChange[]) => {
     onNodesChange(nodesChange);
 
@@ -209,12 +197,10 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
       console.error(response.statusText);
       return;
     }
-
-    const { count } = await response.json();
   };
 
   return (
-    <S.NodeList>
+    <div style={{ width: '100vw', height: '50vh' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -234,6 +220,6 @@ export const NodeList = ({ nodes, setNodes, onNodesChange, edges, setEdges, onEd
       >
         {showMiniMap && <MiniMap zoomable pannable />}
       </ReactFlow>
-    </S.NodeList>
+    </div>
   );
 };
