@@ -9,6 +9,7 @@ import { currentMusicNodeInfoAtom, isPlayingAtom, musicMapAtom } from '../store'
 import YouTube, { YouTubePlayer } from 'react-youtube';
 import { usePrevMusicNodeStack } from './hooks/usePrevMusicNodeStack';
 import { Music } from '../domain/Music';
+import { SearchMusicInfoModal } from './SearchMusicInfoModal';
 
 class SearchFilter {
   trim(value: string) {
@@ -28,10 +29,15 @@ interface MusicManagerProps {
 
 export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
   const { register, handleSubmit, getValues, setValue } = useForm();
+
   const searchButtonRef = useRef<HTMLButtonElement>();
   const [searchResultList, setSearchResultList] = useState([]);
   const [musicName, setMusicName] = useState(); // 서버에 전송되는 실제 값
+  const [videoIdInputted, setVideoIdInputted] = useState(false);
   const musicNameInputRef = useRef<HTMLInputElement>();
+  const [isValidVideoIdInputValue, setIsValidVideoIdInputValue] = useState(false);
+  const [thumbnail, setThumbnail] = useState('');
+
   const [latestAutoSetMusicName, setLatestAutoSetMusicName] = useState<string>();
   const [selectedMusicId, setSelectedMusicId] = useState<number>();
   const searchFilter = new SearchFilter();
@@ -67,7 +73,7 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
     const { videoId } = formData;
 
     if (!(await validateVideoId(videoId))) {
-      alert('유효하지 않은 비디오 ID입니다.');
+      setIsValidVideoIdInputValue(false);
       return;
     }
 
@@ -177,6 +183,25 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
     setHoveredMusicId(id);
   };
 
+  const handleSearchInputChange = async (e: React.ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+
+    let videoId = target.value;
+
+    const regex = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=([^&]+)/;
+    const match = videoId.match(regex);
+    if (match) {
+      videoId = match[1];
+      setValue('videoId', videoId);
+    }
+
+    const { isValid, thumbnail } = await validateVideoId(videoId);
+    setIsValidVideoIdInputValue(isValid);
+
+    setThumbnail(isValid ? thumbnail : '');
+    setVideoIdInputted(target.value.length !== 0);
+  };
+
   return (
     <S.MusicManager>
       <S.MusicListSection>
@@ -206,7 +231,8 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
             <button type="button" onClick={handleSearchButtonClick} ref={searchButtonRef}>
               검색
             </button>
-            <input {...register('videoId')} placeholder="비디오 ID" />
+
+            <S.SearchInput {...register('videoId')} placeholder="비디오 ID" onChange={handleSearchInputChange} isValid={isValidVideoIdInputValue || !videoIdInputted} />
             <button>음악 추가하기</button>
           </form>
         </S.SearchInputSection>
@@ -220,6 +246,7 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
           setMusicNameInputValue={setMusicNameInputValue}
           setVideoIdInputValue={setVideoIdInputValue}
         />
+        {videoIdInputted && <SearchMusicInfoModal thumbnail={thumbnail} />}
       </S.SearchBox>
       <S.MiniPlayer>
         <S.MiniPlayerDecoration>

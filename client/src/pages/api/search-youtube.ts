@@ -7,10 +7,12 @@ const searchYouTubeVideo = async (req: NextApiRequest, res: NextApiResponse) => 
     method: 'GET',
   });
 
-  res.status(response.status);
-  if (response.ok) res.json(await response.json());
+  const imageBuffer = await response.arrayBuffer();
 
-  return res.end();
+  return res.json({
+    isValid: response.ok,
+    thumbnail: Buffer.from(imageBuffer).toString('base64'),
+  });
 };
 
 export default searchYouTubeVideo;

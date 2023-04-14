@@ -68,11 +68,15 @@ export const shortenMusicName = (name: string) => {
 };
 
 export const validateVideoId = async (videoId: string) => {
+  const VALID_VIDEO_ID_LENGTH = 11;
+  if (videoId.length !== VALID_VIDEO_ID_LENGTH) return { isValid: false };
   const response = await fetch(`/api/validate-video-id?videoId=${videoId}`, {
     method: 'GET',
   });
 
-  return response.ok;
+  const { isValid, thumbnail } = await response.json();
+
+  return { isValid, thumbnail };
 };
 
 export const createPlaylistByHead: (head: number, musicNodeMap: Map<number, IMusicNode>) => Playlist = (head, musicNodeMap) => {

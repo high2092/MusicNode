@@ -33,6 +33,10 @@ export const SearchInputSection = styled.div`
   }
 `;
 
+export const SearchInput = styled.input<{ isValid: boolean }>`
+  ${(props) => !props.isValid && 'color: red;'}
+`;
+
 export const MiniPlayer = styled.div`
   flex: 3;
 

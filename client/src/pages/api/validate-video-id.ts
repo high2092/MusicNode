@@ -6,7 +6,12 @@ const validateVideoId = async (req: NextApiRequest, res: NextApiResponse) => {
     method: 'GET',
   });
 
-  return res.status(response.status).end();
+  const imageBuffer = await response.arrayBuffer();
+
+  return res.json({
+    isValid: response.ok,
+    thumbnail: Buffer.from(imageBuffer).toString('base64'),
+  });
 };
 
 export default validateVideoId;
