@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { GetServerSidePropsContext } from 'next';
 import { axiosHttpGet } from '../utils/common';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { isVisiblePlaylistModalAtom, playlistMapAtom } from '../store';
 import { PlaylistComponent } from '../components/Playlist';
@@ -24,11 +24,11 @@ const PlaylistPage = ({ initialPlaylists }: PlaylistPageProps) => {
   const initialPlaylistMap = new Map<number, Playlist>(initialPlaylists.map((playlist) => [playlist.id, new Playlist(playlist)]));
 
   useEffect(() => {
-    // setIsVisiblePlaylistModal(false);
     setPlaylistMap(initialPlaylistMap);
   }, []);
 
   useEffect(() => {
+    setIsVisiblePlaylistModal(false);
     const handleDocumentClick = () => {
       setIsVisiblePlaylistModal(false);
     };
@@ -40,15 +40,19 @@ const PlaylistPage = ({ initialPlaylists }: PlaylistPageProps) => {
     };
   }, []);
 
-  const handleShareButtonClick = () => {};
-
   return (
     <div>
-      <div>
-        {Array.from(playlistMap.values()).map(({ id, name }) => (
-          <PlaylistComponent key={`playlist-page-playlist-${id}`} id={id} name={name} />
-        ))}
-      </div>
+      <h2>플레이리스트 목록</h2>
+      {playlistMap.size ? (
+        <ul>
+          {Array.from(playlistMap.values()).map(({ id, name }) => (
+            <PlaylistComponent key={`playlist-page-playlist-${id}`} id={id} name={name} />
+          ))}
+        </ul>
+      ) : (
+        <li>플레이리스트가 없어요.</li>
+      )}
+
       {isVisiblePlaylistModal && <PlaylistModal BottomElement={<PlaylistShareButton />} />}
     </div>
   );

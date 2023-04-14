@@ -18,6 +18,7 @@ import { MusicInfo } from '../domain/MusicInfo';
 import { PlaylistSubmitForm } from '../components/PlaylistSubmitForm';
 import * as S from '../styles/index';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 interface NodePageProps {
   initialMusicList: IMusic[];
@@ -59,6 +60,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   }, []);
 
   useEffect(() => {
+    setIsVisiblePlaylistModal(false);
     const handleDocumentClick = () => {
       setIsVisiblePlaylistModal(false);
     };
@@ -128,7 +130,12 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   return (
     <div>
       <div>
-        <S.LogoutButton onClick={handleLogoutButtonClick}>로그아웃</S.LogoutButton>
+        <S.TopBarRight>
+          <Link href={'/playlist'} style={{ textDecoration: 'none' }}>
+            <S.PlaylistAnchor>플레이리스트로</S.PlaylistAnchor>
+          </Link>
+          <S.LogoutButton onClick={handleLogoutButtonClick}>로그아웃</S.LogoutButton>
+        </S.TopBarRight>
         <div>노드 목록</div>
         <NodeList nodes={nodes} setNodes={setNodes} onNodesChange={onNodesChange} edges={edges} setEdges={setEdges} onEdgesChange={onEdgesChange} showMiniMap={showMiniMap} />
         <S.ReactFlowOption>

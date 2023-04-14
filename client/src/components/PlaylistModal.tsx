@@ -13,20 +13,6 @@ export const PlaylistModal = ({ BottomElement }: PlaylistModalProps) => {
 
   const playlist = useRecoilValue(selectedPlaylistAtom);
 
-  const { register, handleSubmit } = useForm();
-
-  const handlePlaylistCreate = async (formData: FieldValues) => {
-    const contents = JSON.stringify(playlist.contents);
-    const response = await httpPost('playlist', {
-      name: formData.name,
-      contents,
-    });
-
-    if (!response.ok) {
-      console.log('playlist create failed');
-    }
-  };
-
   return (
     <S.PlaylistModal x={x} y={y} onClick={(e) => e.stopPropagation()}>
       <S.Playlist>

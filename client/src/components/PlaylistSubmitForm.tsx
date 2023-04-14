@@ -18,6 +18,9 @@ export const PlaylistSubmitForm = () => {
     if (!response.ok) {
       console.log('playlist create failed');
     }
+
+    const PLAYLIST_CREATE_SUCCESS_MESSAGE = '플레이리스트가 생성되었습니다.';
+    alert(PLAYLIST_CREATE_SUCCESS_MESSAGE);
   };
   return (
     <S.PlaylistSubmitForm onSubmit={handleSubmit(handlePlaylistCreate)}>

@@ -1,5 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { selectedPlaylistAtom, playlistMapAtom, isVisiblePlaylistModalAtom, clickEventPositionAtom } from '../store';
+import * as S from './styles/Playlist';
 
 export const PlaylistComponent = ({ id, name }) => {
   const playlistMap = useRecoilValue(playlistMapAtom);
@@ -19,5 +20,15 @@ export const PlaylistComponent = ({ id, name }) => {
     setIsVisiblePlaylistModal(true);
   };
 
-  return <div onClick={handleClick(id)}>{name}</div>;
+  const handleDeleteButtonClick = () => {
+    const PLAYLIST_DELETE_CONFIME_MESSAGE = '정말 삭제할까요?';
+    if (!confirm(PLAYLIST_DELETE_CONFIME_MESSAGE)) return;
+  };
+
+  return (
+    <S.Playlist>
+      <S.PlaylistName onClick={handleClick(id)}>{name}</S.PlaylistName>
+      <S.PlaylistDeleteButton onClick={handleDeleteButtonClick}>x</S.PlaylistDeleteButton>
+    </S.Playlist>
+  );
 };
