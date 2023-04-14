@@ -42,8 +42,6 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
 
-  let youtubePlayerRef = useRef<YouTubePlayer>();
-
   const router = useRouter();
 
   useEffect(() => {
@@ -73,12 +71,6 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
   }, []);
 
   const { register, handleSubmit, setValue } = useForm();
-
-  const handleMusicClick = (id: number) => () => {
-    setValue('musicId', id);
-    musicNameRef.current.value = musicMap.get(id).name;
-    console.log(id);
-  };
 
   const handleCreateMusicNode = async (formData: FieldValues) => {
     const { musicId, color } = formData;
@@ -149,7 +141,7 @@ const Home = ({ initialMusicList, initialMusicNodeList }: NodePageProps) => {
       </div>
       <hr />
       <div>
-        <MusicManager handleMusicClick={handleMusicClick} youtubePlayerRef={youtubePlayerRef} />
+        <MusicManager />
       </div>
       {isVisiblePlaylistModal && <PlaylistModal BottomElement={<PlaylistSubmitForm />} />}
     </div>
