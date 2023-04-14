@@ -1,10 +1,10 @@
 import { useRecoilState } from 'recoil';
-import { DragTransferData } from '../domain/DragTransferData';
-import { DragTransferTypes } from '../utils/ReactFlow';
-import { httpDelete } from '../utils/common';
-import * as S from './styles/Music';
-import { SelectableDiv } from './styles/common';
-import { musicMapAtom } from '../store';
+import { DragTransferData } from '../../../domain/DragTransferData';
+import { DragTransferTypes } from '../../../utils/ReactFlow';
+import { httpDelete } from '../../../utils/common';
+import * as S from '../../styles/Music';
+import { SelectableDiv } from '../../styles/common';
+import { musicMapAtom } from '../../../store';
 
 interface MusicProps {
   id: number;

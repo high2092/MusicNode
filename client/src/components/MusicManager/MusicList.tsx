@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 import * as S from '../styles/MusicList';
 import { musicMapAtom } from '../../store';
 import { useEffect, useState } from 'react';
-import { MusicComponent } from '../Music';
+import { MusicComponent } from './MusicList/Music';
 
 class SearchFilter {
   static trim(value: string) {

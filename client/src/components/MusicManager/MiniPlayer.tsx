@@ -3,7 +3,7 @@ import * as S from '../styles/MiniPlayer';
 import YouTube, { YouTubePlayer } from 'react-youtube';
 import { currentMusicNodeInfoAtom, isPlayingAtom } from '../../store';
 import { httpGet, shortenMusicName } from '../../utils/common';
-import { usePrevMusicNodeStack } from '../hooks/usePrevMusicNodeStack';
+import { usePrevMusicNodeStack } from '../../hooks/usePrevMusicNodeStack';
 import { useEffect, useRef } from 'react';
 
 export const MiniPlayer = () => {

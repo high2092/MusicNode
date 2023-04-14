@@ -1,4 +1,4 @@
-import * as S from './styles/SearchMusicInfoModal';
+import * as S from '../../styles/SearchMusicInfoModal';
 
 export const SearchMusicInfoModal = ({ thumbnail }) => {
   return (

@@ -1,5 +1,5 @@
 import { useRecoilState } from 'recoil';
-import { prevMusicNodeStackAtom } from '../../store';
+import { prevMusicNodeStackAtom } from '../store';
 
 export const usePrevMusicNodeStack = () => {
   const [prevMusicNodeStack, setPrevMusicNodeStack] = useRecoilState(prevMusicNodeStackAtom);

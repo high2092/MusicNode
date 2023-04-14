@@ -1,7 +1,7 @@
 import { FieldValues, useForm } from 'react-hook-form';
 import * as S from '../styles/SearchBox';
-import { SearchResultList } from '../SearchResultList';
-import { SearchMusicInfoModal } from '../SearchMusicInfoModal';
+import { SearchResultList } from './SearchBox/SearchResultList';
+import { SearchMusicInfoModal } from './SearchBox/SearchMusicInfoModal';
 import { httpPost, validateVideoId } from '../../utils/common';
 import { useRef, useState } from 'react';
 import { Music } from '../../domain/Music';

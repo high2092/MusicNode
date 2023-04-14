@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { SelectableDiv } from './styles/common';
-import { DragTransferTypes } from '../utils/ReactFlow';
-import { DragTransferData } from '../domain/DragTransferData';
-import * as S from './styles/SearchResultList';
+import { SelectableDiv } from '../../styles/common';
+import { DragTransferTypes } from '../../../utils/ReactFlow';
+import { DragTransferData } from '../../../domain/DragTransferData';
+import * as S from '../../styles/SearchResultList';
 
 type DragTransferType = typeof DragTransferTypes[keyof typeof DragTransferTypes];
 
