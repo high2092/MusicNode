@@ -179,7 +179,7 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
 
   return (
     <S.MusicManager>
-      <div>
+      <S.MusicListSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>음악 목록</div>
           <div>
@@ -196,7 +196,7 @@ export const MusicManager = ({ handleMusicClick, youtubePlayerRef }) => {
             );
           })}
         </S.MusicList>
-      </div>
+      </S.MusicListSection>
 
       <S.SearchBox>
         <S.SearchInputSection>

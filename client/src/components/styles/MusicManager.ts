@@ -12,14 +12,17 @@ export const MusicManager = styled.div`
   }
 `;
 
+export const MusicListSection = styled.div`
+  flex: 4;
+`;
+
 export const MusicList = styled.ul`
-  width: 40vw;
   height: 30vh;
   overflow: scroll;
 `;
 
 export const SearchBox = styled.div`
-  min-width: 10vw;
+  flex: 3;
   overflow-x: visible;
   overflow-y: hidden;
 `;
@@ -31,6 +34,8 @@ export const SearchInputSection = styled.div`
 `;
 
 export const MiniPlayer = styled.div`
+  flex: 3;
+
   display: flex;
 
   justify-content: center;
