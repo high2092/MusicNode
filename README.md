@@ -11,48 +11,49 @@
 - Node.js 16.19.0  
 - JDK 17.0.6  
 - H2 Database 2.1.214  
+- Yarn 1.22.19
 
 ### 순서
 
 1. GitHub 저장소 내려받기
 
-```
-git clone git@github.com:high2092/MusicNode.git
-```
+    ```
+    git clone git@github.com:high2092/MusicNode.git
+    ```
 
 2. 환경변수 설정 (파일 이름 변경)
 
-client: `.env.example` → `.env`  
-server: `application.yml.example` → `application.yml`
+    client: `.env.example` → `.env`  
+    server: `application.yml.example` → `application.yml`
 
 3. H2 Database 실행 (설치 폴더로 가서 다음 명령어 입력)
 
-```
-./h2.sh
-```
+    ```
+    ./h2.sh # Windows의 경우 ./h2.bat
+    ```
 
 4. 프로젝트 루트 디렉토리로 이동
 
-```
-cd MusicNode
-````
+    ```
+    cd MusicNode
+    ````
 
 5. 서버 실행
 
-```
-cd server
-./gradlew build -x test
-java -jar build/libs/musicnode-0.0.1-SNAPSHOT.jar
-```
+    ```
+    cd server
+    ./gradlew build -x test
+    java -jar build/libs/musicnode-0.0.1-SNAPSHOT.jar
+    ```
 
 6. 클라이언트 실행 (새 터미널)
 
-```
-cd client
-yarn
-yarn build
-yarn start
-```
+    ```
+    cd client
+    yarn
+    yarn build
+    yarn start
+    ```
 
 ## 구현 완료된 기능 목록
 
