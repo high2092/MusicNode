@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/musicnode
+    url: jdbc:h2:~/musicnode # 최초 실행 이후 jdbc:h2:tcp://localhost/~/musicnode 로 변경하는 것을 권장
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -12,6 +12,25 @@ spring:
       hibernate:
         format_sql: true
 
+    profiles:
+      include: oauth
+    security:
+      oauth2:
+        client:
+          registration:
+            kakao:
+              client-id: your_client_id
+              redirect-uri: http://localhost:8080/login/oauth2/code/kakao
+              client-authentication-method: POST
+              authorization-grant-type: authorization_code
+              client-name: kakao
+          provider:
+            kakao:
+              authorization-uri: https://kauth.kakao.com/oauth/authorize
+              token-uri: https://kauth.kakao.com/oauth/token
+              user-info-uri: https://kapi.kakao.com/v2/user/me
+              user-name-attribute: id
+
 logging:
   level:
     org.hibernate.SQL: debug
@@ -19,5 +38,5 @@ logging:
 
 app:
   auth:
-    token-secret: 'your-token-secret'
-  password-salt: 'your-salt'
+    token-secret: yourtokensecretyourtokensecretyourtokensecret
+  password-salt: yoursalt
