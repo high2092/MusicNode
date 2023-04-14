@@ -20,19 +20,24 @@
 git clone git@github.com:high2092/MusicNode.git
 ```
 
-2. H2 Database 실행 (설치 폴더로 가서 다음 명령어 입력)
+2. 환경변수 설정 (파일 이름 변경)
+
+client: `.env.example` → `.env`  
+server: `application.yml.example` → `application.yml`
+
+3. H2 Database 실행 (설치 폴더로 가서 다음 명령어 입력)
 
 ```
 ./h2.sh
 ```
 
-3. 프로젝트 루트 디렉토리로 이동
+4. 프로젝트 루트 디렉토리로 이동
 
 ```
 cd MusicNode
 ````
 
-4. 서버 실행
+5. 서버 실행
 
 ```
 cd server
@@ -40,7 +45,7 @@ cd server
 java -jar build/libs/musicnode-0.0.1-SNAPSHOT.jar
 ```
 
-5. 클라이언트 실행 (새 터미널)
+6. 클라이언트 실행 (새 터미널)
 
 ```
 cd client
